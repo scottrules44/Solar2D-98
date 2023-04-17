@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // This file is part of the Corona game engine.
-// For overview and more information on licensing please refer to README.md 
+// For overview and more information on licensing please refer to README.md
 // Home page: https://github.com/coronalabs/corona
 // Contact: support@coronalabs.com
 //
@@ -92,7 +92,7 @@ int Runtime::ShellPluginCollector_Async(lua_State* L)
 	}
 
 	FinalizeWorkingThreadWithEvent(runtime, L);
-	
+
 	std::thread* thread = new std::thread([](std::string args, Lua::Ref listener, Runtime* runtime) {
 		lua_State* L = Rtt::Lua::New(true);
 		lua_pushcfunction(L, luaopen_coronabaselib);
@@ -224,14 +224,14 @@ Runtime::~Runtime()
 		PlatformOpenALPlayer::SharedInstance()->RuntimeWillTerminate( * this );
 		PlatformOpenALPlayer::ReleaseInstance();
 		fOpenALPlayer = NULL;
-	}	
+	}
 #endif
 
 	Rtt_DELETE( fArchive );
 	Rtt_DELETE( fScheduler );
 	fTimer->Stop();
 	Rtt_DELETE( fTimer );
-	
+
 	// Notify textures that everything is about to be destroyed. Clean up all dependencies.
 	// This is required because Textures and Objects may be dependent on Lua state, or have to notify plugins
 	fDisplay->Teardown();
@@ -253,7 +253,7 @@ Runtime::~Runtime()
 	// Must delete this *after* Lua is destroyed, since certain Lua finalizers
 	// rely on fDisplay being valid
 	Rtt_DELETE( fDisplay );
-	
+
 	// Technically, C++ rules say we should destroy fWorld before fDisplayList,
 	// but fDisplayList has display objects that own b2Body objects and require
 	// the fWorld to exist in order to call DestroyBody properly.  Therefore, we
@@ -398,7 +398,7 @@ static int
 exitCallback( lua_State* L )
 {
 	Runtime* runtime = LuaContext::GetRuntime( L );
-	int code = luaL_optint( L, 1, 0 );	
+	int code = luaL_optint( L, 1, 0 );
 	PlatformExitCallback* callback = runtime->GetExitCallback();
 	if ( callback )
 	{
@@ -517,7 +517,7 @@ pushShellArgs( lua_State* L )
 
 		runtime->PushDownloadablePlugins( L );
 		lua_setfield( L, -2, "plugins" );
-		
+
 #if defined( Rtt_AUTHORING_SIMULATOR )
 		lua_pushlightuserdata(L, runtime);
 		lua_pushcclosure(L, &Runtime::ShellPluginCollector_Async, 1);
@@ -530,7 +530,7 @@ pushShellArgs( lua_State* L )
 			lua_pushstring( L, name );
 			lua_setfield( L, -2, "platform" );
 		}
-        
+
         lua_pushboolean( L, runtime->IsProperty( Runtime::kIsSimulatorExtension ) );
 		lua_setfield( L, -2, "isSimulatorExtension" ); // params.isSimulatorExtension
 	}
@@ -544,7 +544,7 @@ static int
 pushShellArgs( lua_State* L )
 {
 	int result = 1;
-	
+
 	Runtime* runtime = LuaContext::GetRuntime( L );
 	Rtt::String value( runtime->GetAllocator() );
 
@@ -557,12 +557,12 @@ pushShellArgs( lua_State* L )
 			overlay->InitProxy( L );
 			overlay->GetProxy()->PushTable( L );
 			lua_setfield( L, -2, "overlay" ); // params.overlay
-		
+
 			bool showTrialMessage = runtime->IsShowingTrialMessage();
 			lua_pushboolean(L, showTrialMessage);
 			lua_setfield(L, -2, "showMessage");
 		}
-		
+
 
 		// Pass function to schedule LoadMainTask
 		lua_pushcfunction( L, onShellComplete );
@@ -664,7 +664,7 @@ application =
 		-- In the future, we could change this to be a table (as above)
 		-- since plugins will have to recognize both formats
 	},
-	
+
 	-- Standard use case for CoronaEnterprise
 	-- Nothing. Just manually pass appKey:
 	--
@@ -706,7 +706,7 @@ Runtime::InitializeFuse( lua_State *L, int index )
 				// [Lua] local params = application.metadata
 				lua_getfield( L, index, "metadata" ); // application.metadata from config.lua
 			}
-			
+
 			// [Lua] fuse._start( params )
 			Lua::DoCall( L, 1, 0 );
 		}
@@ -847,7 +847,7 @@ Runtime::PushConfig( lua_State *L, bool shouldRestrictLibs )
 			// Read server-generated metadata before popping application
 			InitializeFuse( L, -1 );
 #endif
-			
+
 			lua_getfield( L, -1, "showRuntimeErrors" );
             bool runtimeErrorsExplicitlySet = ! lua_isnil( L, -1 );
             SetProperty( kShowRuntimeErrorsSet, runtimeErrorsExplicitlySet );
@@ -890,7 +890,7 @@ void
 Runtime::ReadConfig( lua_State *L )
 {
 	// Rtt_ASSERT( ! fDisplay );
-	Rtt_ASSERT( 1 == lua_gettop( L ) );	
+	Rtt_ASSERT( 1 == lua_gettop( L ) );
 	Rtt_ASSERT( lua_istable( L, -1 ) );
 
 	lua_getfield( L, -1, "multisample" );
@@ -902,10 +902,10 @@ Runtime::ReadConfig( lua_State *L )
 
 	lua_getfield( L, -1, "fps" );
 	int fps = (int) lua_tointeger( L, -1 );
-	if ( 60 == fps )	// Besides default (30), only 60 fps is supported
+	if ( 60 == fps || 90 == fps || 120 == fps )	// Besides default (30), only 60, 90, 120 fps are supported
 	{
 		Rtt_ASSERT( ! IsProperty( kIsApplicationLoaded ) );
-		fFPS = 60;
+		fFPS = fps;
 	}
 	lua_pop( L, 1 );
 
@@ -916,7 +916,7 @@ Runtime::ReadConfig( lua_State *L )
 		SetProperty( kUseExitOnErrorHandler, true );
 	}
 	lua_pop( L, 1 );
-	
+
 #ifdef Rtt_USE_ALMIXER
 	lua_getfield( L, -1, "audioPlayFrequency" );
 	int frequency = (int) lua_tointeger( L, -1 );
@@ -926,11 +926,11 @@ Runtime::ReadConfig( lua_State *L )
 	lua_getfield( L, -1, "maxSources" );
 	int sources = (int) lua_tointeger( L, -1 );
 	PlatformOpenALPlayer::SetMaxSources( sources );
-	lua_pop( L, 1 );	
+	lua_pop( L, 1 );
 #endif
-	
 
-	Rtt_ASSERT( 1 == lua_gettop( L ) );	
+
+	Rtt_ASSERT( 1 == lua_gettop( L ) );
 }
 
 void
@@ -966,7 +966,7 @@ Runtime::AddDownloadablePlugin(
 
 		lua_pushboolean( L, isSupportedOnThisPlatform ? 1 : 0 );
 		lua_setfield( L, -2, "isSupportedOnThisPlatform" );
-		
+
 		lua_pushstring(L, pluginEntryJSON);
 		lua_setfield(L, -2, "json");
 	}
@@ -985,7 +985,7 @@ Runtime::FindDownloadablePlugins( const char *simPlatformName )
 	// 'runtimeL' variable for Runtime's L below.
 	lua_State *L = luaL_newstate();
 	luaL_openlibs(L);
-	
+
 	Lua::RegisterModuleLoader( L, "lpeg", luaopen_lpeg );
 	Lua::RegisterModuleLoader( L, "dkjson", Lua::Open< luaload_dkjson > );
 	Lua::RegisterModuleLoader( L, "json", Lua::Open< luaload_json > );
@@ -997,7 +997,7 @@ Runtime::FindDownloadablePlugins( const char *simPlatformName )
 	lua_pop(L, 1); // pop json
 
 	const char kBuildSettings[] = "build.settings";
-	
+
 	String filePath( & fPlatform.GetAllocator() );
 	fPlatform.PathForFile( kBuildSettings, MPlatform::kResourceDir, MPlatform::kTestFileExists, filePath );
 
@@ -1060,7 +1060,7 @@ Runtime::FindDownloadablePlugins( const char *simPlatformName )
 						String pluginJsonStr;
 						pluginJsonStr.Set(pluginJson);
 						lua_pop(L, 1);
-						
+
 						// Honor the settings for "supportedPlatforms", if any
 						lua_getfield(L, -1, "supportedPlatforms");
 						{
@@ -1208,7 +1208,7 @@ Runtime::LoadApplication( const LoadParameters& parameters )
 
 	// Use kSystemResourceDir b/c resource.car should always live inside the .app bundle
 	String filePath( GetAllocator() );
-	
+
     fPlatform.PathForFile( basename, MPlatform::kSystemResourceDir, MPlatform::kDefaultPathFlags, filePath );
 
 	{
@@ -1221,7 +1221,7 @@ Runtime::LoadApplication( const LoadParameters& parameters )
 
 		if ( ! IsProperty( kIsCustomEffectsAvailable ) )
 		{
-			
+
 		}
 
 		if ( ! IsProperty( kIsApplicationNotArchived ) )
@@ -1232,7 +1232,7 @@ Runtime::LoadApplication( const LoadParameters& parameters )
 			}
 			InitializeArchive( filePath.GetString() );
 		}
-		
+
 		// ---------------------------------------------------------------
 
 		lua_State *L = VMContext().L();
@@ -1286,9 +1286,9 @@ Runtime::LoadApplication( const LoadParameters& parameters )
 		}
 
 		PopAndClearConfig( L );
-		
+
 		// ---------------------------------------------------------------
-		
+
 		// Now that the config.lua has been read, startup any libraries that depend on those values
 #if defined ( Rtt_USE_ALMIXER )
 		if ( launchOptions & kDisableAudio )
@@ -1302,7 +1302,7 @@ Runtime::LoadApplication( const LoadParameters& parameters )
 #endif
 		bool connectToDebugger = ( launchOptions & kConnectToDebugger );
 		SetProperty( kIsDebuggerConnected, connectToDebugger );
-		
+
 		//If there's no delegate to check "dependencies" for CoronaKit, then exit
 		if ( fDelegate )
 		{
@@ -1321,7 +1321,7 @@ Runtime::LoadApplication( const LoadParameters& parameters )
 					// If kLaunchDeviceShell is not set, just schedule main.lua
 					LoadMainTask* e = Rtt_NEW( Allocator(), LoadMainTask( NULL ) );
 					GetScheduler().Append( e );
-					
+
 					result = Runtime::kSuccess;
 				}
 			}
@@ -1347,7 +1347,7 @@ Runtime::LoadApplication( U32 launchOptions, DeviceOrientation::Type orientation
 	LoadParameters parameters;
 	parameters.launchOptions = launchOptions;
 	parameters.orientation = orientation;
-	
+
 	return LoadApplication( parameters );
 }
 
@@ -1429,8 +1429,8 @@ Runtime::OnInternalSystemEvent( SystemEvent::Type t )
 	InternalSystemEvent e( t );
 	DispatchEvent( e );
 }
-	
-	
+
+
 void
 Runtime::CoronaInvokeSystemSuspendEvent()
 {
@@ -1441,7 +1441,7 @@ Runtime::CoronaInvokeSystemSuspendEvent()
 	{
 		// Invoke the user system event
 		OnSystemEvent( SystemEvent::kOnAppSuspend );
-		// Always do our suspend after the user so we don't get in the user's way, 
+		// Always do our suspend after the user so we don't get in the user's way,
 		// e.g. shut down systems so their calls fail,
 		// e.g. suspend video objects which they may want to handle different (destroy objects)
 		OnInternalSystemEvent( SystemEvent::kOnAppSuspend );
@@ -1461,7 +1461,7 @@ Runtime::CoronaInvokeSystemResumeEvent()
 		OnSystemEvent( SystemEvent::kOnAppResume );
 	}
 }
-	
+
 void
 Runtime::CoronaAllSuspend()
 {
@@ -1484,7 +1484,7 @@ Runtime::CoronaAllSuspend()
 	// Suspend platform specific items (like video players)
 	fPlatform.Suspend();
 }
-	
+
 void
 Runtime::CoronaCoreSuspend()
 {
@@ -1520,7 +1520,7 @@ Runtime::Suspend(bool sendApplicationEvents /* = true */)
 		CoronaInvokeSystemSuspendEvent();
 	}
 
-	// Easy case: 
+	// Easy case:
 	if ( kSuspendAll == fSuspendOverrideProperties )
 	{
 		CoronaAllSuspend();
@@ -1653,7 +1653,7 @@ Runtime::CoronaResumeAll()
 		fDelegate->DidResume( *this );
 	}
 }
-	
+
 void
 Runtime::Resume(bool sendApplicationEvents /* = true */)
 {
@@ -1705,7 +1705,7 @@ void
 Runtime::Collect()
 {
 	LuaContext& vm = VMContext();
-	
+
 	// Lua
 	vm.Collect();
 
@@ -1746,7 +1746,7 @@ Runtime::GetExitCallback()
 	return platform->GetExitCallback();
 }
 
-void 
+void
 Runtime::UnloadResources()
 {
 #if defined( Rtt_ANDROID_ENV ) && defined( Rtt_DEBUG )
@@ -1775,7 +1775,7 @@ Runtime::UnloadResources()
 #endif
 }
 
-void 
+void
 Runtime::ReloadResources()
 {
 #if defined( Rtt_ANDROID_ENV ) && defined( Rtt_DEBUG )
@@ -1800,7 +1800,7 @@ Runtime::ReloadResources()
 
 	// Force rebuild of entire display
 	fDisplay->GetStage()->Invalidate( DisplayObject::kRenderDirty );
-	
+
 #if defined( Rtt_ANDROID_ENV ) && defined( Rtt_DEBUG )
 	Rtt_TRACE( ( "< ReloadTextures" ) );
 #endif
@@ -1870,7 +1870,7 @@ Runtime::SetResource( CachedResource* resource, const char key[] )
 #endif
 				r->Remove();
 			}
-		
+
 			// Remove
 			lua_pushnil( L );
 		}
@@ -1928,7 +1928,7 @@ Runtime::PushResourceRegistry()
 			lua_newtable( L ); // t
 
 			lua_pushlightuserdata( L, this );
-			lua_pushvalue( L, -2 );		
+			lua_pushvalue( L, -2 );
 			lua_settable( L, LUA_REGISTRYINDEX ); // LUA_REGISTRY[this] = t
 		}
 	}
@@ -1983,7 +1983,7 @@ Runtime::operator()()
 	{
 		fDisplay->Render();
 	}
-	
+
 }
 void
 Runtime::Render()
@@ -2046,4 +2046,3 @@ RuntimeGuard::~RuntimeGuard()
 } // namespace Rtt
 
 // ----------------------------------------------------------------------------
-
