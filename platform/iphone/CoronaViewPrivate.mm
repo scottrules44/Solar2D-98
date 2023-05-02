@@ -986,7 +986,7 @@ InitializeEvents( CoronaView *view, Rtt::TouchEvent *touchEvents, NSSet *touches
 - (void)dispatchTouches:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	using namespace Rtt;
-
+    
 	Rtt_ASSERT( 0 == fInhibitCount );
 
 	if ( ! fTouchesData )
@@ -1553,8 +1553,10 @@ DispatchEvent( Rtt_UITextField *textField, Rtt::UserInputEvent::Phase phase )
 	IPhoneTextFieldObject *o = (textField).owner;
 	if ( o )
 	{
-		UserInputEvent e ( phase );
-		o->DispatchEventWithTarget( e );
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            UserInputEvent e ( phase );
+            o->DispatchEventWithTarget( e );
+        });
 	}
 }
 
