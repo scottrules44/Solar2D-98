@@ -1108,6 +1108,10 @@ PrintTouches( NSSet *touches, const char *header )
 #ifndef Rtt_TVOS_ENV
 	Rtt::DragEvent e( fStartTouchPosition.x, fStartTouchPosition.y, currentTouchPosition.x, currentTouchPosition.y );
 	[self dispatchEvent: (&e)];
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        Rtt::DragEvent e( fStartTouchPosition.x, fStartTouchPosition.y, currentTouchPosition.x, currentTouchPosition.y );
+        [self dispatchEvent: (&e)];
+    });
 #endif
 }
 
