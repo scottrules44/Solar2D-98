@@ -1080,7 +1080,7 @@ PrintTouches( NSSet *touches, const char *header )
 	if ( fInhibitCount > 0 ) { return; }
 
 	UITouch *touch = touches.anyObject;
-	CGPoint currentTouchPosition;
+    CGPoint currentTouchPosition = {};
 
 #ifdef Rtt_MULTITOUCH
 	if ( self.multipleTouchEnabled )
