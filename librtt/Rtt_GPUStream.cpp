@@ -1474,7 +1474,8 @@ GPUStream::CaptureFrameBuffer( BufferBitmap& outBuffer, S32 xScreen, S32 yScreen
 	const GLenum kFormat = GL_RGBA;
 	const GLenum kType = GL_UNSIGNED_BYTE;
 #else
-	PlatformBitmap::Format format = outBuffer.GetFormat();
+    PlatformBitmap::Format format = outBuffer.GetFormat();
+	
 	const GLenum kFormat = GPU_GetPixelFormat( format );
 	GLenum kType = GPU_GetPixelType( format );
 #endif

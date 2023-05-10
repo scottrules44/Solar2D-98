@@ -992,7 +992,6 @@ Display::Capture( DisplayObject *object,
     fRenderer->SetViewport( previous_viewport_x, previous_viewport_y, previous_viewport_width, previous_viewport_height );
     fRenderer->SetFrustum( previous_viewMatrix, previous_projMatrix );
     fRenderer->SetFrameBufferObject( previous_fbo );
-
 #    if ENABLE_DEBUG_PRINT
 
         printf( "capture bounds in content units: x: %d y: %d w: %d h: %d\n",
@@ -1012,7 +1011,7 @@ Display::Capture( DisplayObject *object,
 
     // If object was just created this will draw it to main scene as well, not only to FBO
     scene.Invalidate();
-
+    
     return paint;
 }
 
