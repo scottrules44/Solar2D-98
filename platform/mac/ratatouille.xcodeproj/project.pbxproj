@@ -6644,7 +6644,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ $CONFIGURATION == *-template ]]; then\necho \"Skipping creation of agent app in template build\"\nexit 0\nfi\n\nif [[ $CONFIGURATION == \"Debug\" ]]; then\necho \"Skipping codesign of components in Debug build\"\nexit 0\nfi\n\n# Xcode will sign the main app for us via the normal Xcode settings.\n# But we need to sign any additional external tools we bundle with the simulator that aren't already signed.\n\n# sign zipalign\ncodesign -f -s \"Developer ID Application: Corona Labs Inc\" \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/zipalign\"\n\n# sign that annoying Corona Terminal shell script which needs to die\ncodesign -f -s \"Developer ID Application: Corona Labs Inc\" \"$SRCROOT/../../bin/mac/Corona Terminal\"\n\n";
+			shellScript = "if [[ $CONFIGURATION == *-template ]]; then\necho \"Skipping creation of agent app in template build\"\nexit 0\nfi\n\nif [[ $CONFIGURATION == \"Debug\" ]]; then\necho \"Skipping codesign of components in Debug build\"\nexit 0\nfi\n\n# Xcode will sign the main app for us via the normal Xcode settings.\n# But we need to sign any additional external tools we bundle with the simulator that aren't already signed.\n\n# sign zipalign\ncodesign -f -s \"Developer ID Application: Scott Harrison (A6QFRGXX8S)\" \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/zipalign\"\n\n# sign that annoying Corona Terminal shell script which needs to die\ncodesign -f -s \"Developer ID Application: Scott Harrison (A6QFRGXX8S)\" \"$SRCROOT/../../bin/mac/Corona Terminal\"\n\n";
 			showEnvVarsInLog = 0;
 		};
 		A4F7A7A91444D6FE0010CDE1 /* Run script (copy Simulator extensions) */ = {
@@ -8332,13 +8332,12 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					"../../external/tiny-aes128-c",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(SRCROOT)/../../external/SDL_sound.framework/Headers",
 					"$(SRCROOT)/../../external/SDL.framework/Headers",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = "$(S2D_MIN_VER_MACOS:default=10.13)";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_CODE_SIGN_FLAGS = "--deep --timestamp";
 				SDKROOT = macosx;
@@ -8364,7 +8363,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = NO;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = A6QFRGXX8S;
+				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A6QFRGXX8S;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8381,7 +8381,6 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 					"../../external/kelan-yrk-spinning-progress-indicator-layer/Code",
 					"../../external/Simple-NSAlert-with-Blocks",
@@ -8492,7 +8491,6 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -8516,7 +8514,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -8538,7 +8535,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-template";
@@ -8630,7 +8626,6 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -8661,7 +8656,6 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -8688,7 +8682,6 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -8708,7 +8701,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = NO;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = A6QFRGXX8S;
+				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A6QFRGXX8S;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8725,7 +8719,6 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 					"../../external/kelan-yrk-spinning-progress-indicator-layer/Code",
 					"../../external/Simple-NSAlert-with-Blocks",
@@ -8768,7 +8761,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = NO;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = A6QFRGXX8S;
+				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A6QFRGXX8S;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8785,7 +8779,6 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 					"../../external/kelan-yrk-spinning-progress-indicator-layer/Code",
 					"../../external/Simple-NSAlert-with-Blocks",
@@ -8866,13 +8859,12 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					"../../external/tiny-aes128-c",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(SRCROOT)/../../external/SDL_sound.framework/Headers",
 					"$(SRCROOT)/../../external/SDL.framework/Headers",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = "$(S2D_MIN_VER_MACOS:default=10.13)";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--deep --timestamp";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
@@ -8942,13 +8934,12 @@
 					"../../external/b2Separator-cpp",
 					../../external/Box2D,
 					../../external/smoothpolygon,
-					"../../external/osx-xmlrpc",
 					"../../external/tiny-aes128-c",
 					/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(SRCROOT)/../../external/SDL_sound.framework/Headers",
 					"$(SRCROOT)/../../external/SDL.framework/Headers",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = "$(S2D_MIN_VER_MACOS:default=10.13)";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_CODE_SIGN_FLAGS = "--deep --timestamp";
 				SDKROOT = macosx;

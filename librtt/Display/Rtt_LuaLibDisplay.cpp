@@ -2094,6 +2094,10 @@ DisplayLibrary::capture( lua_State *L )
 														saveToFile,
 														false,
 														cropObjectToScreenBounds );
+    if(!saveToFile){
+        display.Render(); // rerender if no texture has been created
+    }
+    
 	if( ! paint )
 	{
 		CoronaLuaError(L, "display.capture() unable to capture screen. The platform or device might not be supported" );
@@ -2107,7 +2111,7 @@ DisplayLibrary::capture( lua_State *L )
 	{
 		bool didAdd = runtime->Platform().AddBitmapToPhotoLibrary( paint->GetBitmap() );
 		Rtt_WARN_SIM( didAdd, ( "WARNING: Simulator does not support adding screen shots to photo library\n" ) );
-	}
+    }
 	
 	// Create a bitmap display object and have it returned to Lua.
 	// Note: This screenshot will be automatically rendered on top of the display. If the user does

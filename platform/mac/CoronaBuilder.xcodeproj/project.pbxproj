@@ -1021,6 +1021,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0830;
+				TargetAttributes = {
+					A4FCD3EB14CF417C0004E91D = {
+						DevelopmentTeam = A6QFRGXX8S;
+					};
+				};
 			};
 			buildConfigurationList = A4FCD3E614CF417C0004E91D /* Build configuration list for PBXProject "CoronaBuilder" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1393,7 +1398,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = "$(S2D_MIN_VER_MACOS:default=10.13)";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1444,7 +1449,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = "$(S2D_MIN_VER_MACOS:default=10.13)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
@@ -1457,8 +1462,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Corona Labs Inc";
+				CODE_SIGN_IDENTITY = "Developer ID Application: Scott Harrison (A6QFRGXX8S)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A6QFRGXX8S;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1475,10 +1482,7 @@
 					Rtt_STDLIB_EXIT,
 					"$(inherited)",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"../../external/osx-xmlrpc",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "../../tools/CoronaBuilder/CoronaBuilder-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.coronalabs.${PRODUCT_NAME:rfc1034identifier}";
@@ -1494,7 +1498,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Corona Labs Inc";
+				CODE_SIGN_IDENTITY = "Developer ID Application: Scott Harrison (A6QFRGXX8S)";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1511,10 +1515,7 @@
 					Rtt_STDLIB_EXIT,
 					"$(inherited)",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"../../external/osx-xmlrpc",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "../../tools/CoronaBuilder/CoronaBuilder-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.coronalabs.${PRODUCT_NAME:rfc1034identifier}";
