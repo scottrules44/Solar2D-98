@@ -123,6 +123,9 @@ fi
 mkdir -p "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/Android"
 cp -v -X "$SRCROOT"/platform/android/resources/debug.keystore "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/Android/"
 
+mkdir -p "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/iOS"
+cp -v -X "$SRCROOT"/platform/iphone/Images.xcassets "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/iOS/"
+
 if [ "$ENTERPRISE" != "" ]
 then
 	(tar -C "$TMPPATH/${PRODUCT_DIR}/" -xf "$ENTERPRISE" && mv "$TMPPATH/${PRODUCT_DIR}/CoronaEnterprise" "$TMPPATH/${PRODUCT_DIR}/${NATIVE_DIR}" && ls "$TMPPATH/${PRODUCT_DIR}/${NATIVE_DIR}") || (echo "ERROR: failed to extract Enterprise" && exit 1)
