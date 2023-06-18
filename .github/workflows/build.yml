@@ -26,7 +26,7 @@ env:
 jobs:
   source-code:
     name: Check out and process source code
-    if: "!contains(github.ref, 'refs/tags/') || github.repository == 'coronalabs/corona'"
+    if: "!contains(github.ref, 'refs/tags/') || github.repository == 'scottrules44/Solar2D-98'"
     runs-on: macos-12
     steps:
       - run: CDR="$(basename "$(pwd)")" ; cd .. ; rm -rf "$CDR" ; mkdir -p "$CDR" ; cd "$CDR"
@@ -666,7 +666,7 @@ jobs:
 
           "
           else
-          GIT_LOG='See https://github.com/coronalabs/corona for details
+          GIT_LOG='See https://github.com/scottrules44/Solar2D-98 for details
           '
           fi
           echo 'GIT_LOG<<EOF' >> $GITHUB_ENV
@@ -773,7 +773,7 @@ jobs:
           {
             "channel":"C01629K0E9W",
             "link_names":true,
-            "text": "New Solar2D build <https://github.com/coronalabs/corona/releases/tag/${{ env.BUILD }}|${{ env.BUILD }}> is @here!"
+            "text": "New Solar2D build <https://github.com/scottrules44/Solar2D-98/releases/tag/${{ env.BUILD }}|${{ env.BUILD }}> is @here!"
           }
           EOF
         env:
@@ -785,7 +785,7 @@ jobs:
           {
             "channel":"C0ASY7G1X",
             "link_names":true,
-            "text": "New Solar2D Build <https://github.com/coronalabs/corona/releases/tag/${{ env.BUILD }}|${{ env.BUILD }}> is up!"
+            "text": "New Solar2D Build <https://github.com/scottrules44/Solar2D-98/releases/tag/${{ env.BUILD }}|${{ env.BUILD }}> is up!"
           }
           EOF
         env:
@@ -795,7 +795,7 @@ jobs:
           [ -z "$DISCORD_WEBHOOK_BUILDS" ] &&  exit 0
           curl "$DISCORD_WEBHOOK_BUILDS" -X POST -H "Content-type: application/json" -d  @- << EOF
           {
-            "content": "New Solar2D Build [${{ env.BUILD }}](https://github.com/coronalabs/corona/releases/tag/${{ env.BUILD }}) is up!"
+            "content": "New Solar2D Build [${{ env.BUILD }}](https://github.com/scottrules44/Solar2D-98/releases/tag/${{ env.BUILD }}) is up!"
           }
           EOF
         env:
@@ -812,7 +812,7 @@ jobs:
       - release
       - source-code
     runs-on: ubuntu-20.04
-    if: always() && (!contains(github.ref, 'refs/tags/') || github.repository == 'coronalabs/corona')
+    if: always() && (!contains(github.ref, 'refs/tags/') || github.repository == 'scottrules44/Solar2D-98')
     steps:
       - uses: technote-space/workflow-conclusion-action@v1
       - uses: actions/checkout@v3
