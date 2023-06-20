@@ -203,8 +203,8 @@ xcrun SetFile -a E "$TMPPATH/${PRODUCT_DIR}/Documentation.html" # hide extension
 		done
 
 
-		codesign --timestamp --deep --force --options runtime --strict --sign 'Developer ID Application: Scott Harrison(A6QFRGXX8S)' "${LIBRARIES[@]}"
-		codesign --timestamp --deep --force --options runtime --strict --sign 'Developer ID Application: Scott Harrison(A6QFRGXX8S)' --entitlements "$ENTITLEMENTS"  "${EXECUTABLES[@]}"
+		codesign --timestamp --deep --force --options runtime --strict --sign 'Developer ID Application: Scott Harrison (A6QFRGXX8S)' "${LIBRARIES[@]}"
+		codesign --timestamp --deep --force --options runtime --strict --sign 'Developer ID Application: Scott Harrison (A6QFRGXX8S)' --entitlements "$ENTITLEMENTS"  "${EXECUTABLES[@]}"
 	)
 	}
 
