@@ -5016,6 +5016,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = A6QFRGXX8S;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -5029,9 +5030,11 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
 				PRODUCT_NAME = template;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = ios;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Corona Sim iOS";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				SWIFT_VERSION = 3.0;
@@ -5046,6 +5049,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = A6QFRGXX8S;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -5059,9 +5063,11 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
 				PRODUCT_NAME = template;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = ios;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Corona Sim iOS";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				SWIFT_VERSION = 3.0;
@@ -5731,6 +5737,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = A6QFRGXX8S;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -5748,9 +5755,11 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
 				PRODUCT_NAME = "template-angle";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = ios;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Corona Sim iOS";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				SWIFT_VERSION = 3.0;
@@ -5765,6 +5774,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = A6QFRGXX8S;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -5782,9 +5792,11 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
 				PRODUCT_NAME = "template-angle";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = ios;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Corona Sim iOS";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				SWIFT_VERSION = 3.0;

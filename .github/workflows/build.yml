@@ -18,7 +18,7 @@ on:
 
 env:
   WORKSPACE: ${{ github.workspace }}
-  DEVELOPER_DIR: /Applications/Xcode_15.2.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
   BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
   YEAR: ${{ github.event.inputs.buildYear }}
 
@@ -26,7 +26,6 @@ env:
 jobs:
   source-code:
     name: Check out and process source code
-    if: "!contains(github.ref, 'refs/tags/') || github.repository == 'coronalabs/corona'"
     runs-on: macos-12
     steps:
       - run: CDR="$(basename "$(pwd)")" ; cd .. ; rm -rf "$CDR" ; mkdir -p "$CDR" ; cd "$CDR"
@@ -45,7 +44,7 @@ jobs:
 
   native:
     needs: source-code
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - run: CDR="$(basename "$(pwd)")" ; cd .. ; rm -rf "$CDR" ; mkdir -p "$CDR" ; cd "$CDR"
       - name: Get processed code
@@ -70,9 +69,9 @@ jobs:
     strategy:
       matrix:
         runner:
-          - macos-13
+          - macos-14
         xcode:
-          - Xcode_15.3
+          - Xcode_15.4
         target:
           - template
           - template-angle
@@ -913,7 +912,7 @@ jobs:
       - release
       - source-code
     runs-on: ubuntu-20.04
-    if: (success() || failure()) && !cancelled() && (!contains(github.ref, 'refs/tags/') || github.repository == 'coronalabs/corona')
+    if: (success() || failure()) && !cancelled()
     steps:
       - uses: technote-space/workflow-conclusion-action@v1
       - uses: actions/checkout@v4
