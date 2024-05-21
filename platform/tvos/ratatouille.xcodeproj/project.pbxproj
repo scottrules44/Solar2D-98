@@ -6701,8 +6701,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = "";
@@ -6712,7 +6712,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "tvOS Corona Sim 3";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "tvOS Corona Sim Dis";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = ../../librtt;
@@ -6724,8 +6724,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = "";
@@ -6735,7 +6735,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "tvOS Corona Sim 3";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "tvOS Corona Sim Dis";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = ../../librtt;
@@ -6895,8 +6895,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -6918,7 +6918,7 @@
 					"-force_load",
 					"$(BUILT_PRODUCTS_DIR)/libluafilesystem.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaCards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -6932,8 +6932,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -6950,7 +6950,7 @@
 					"-force_load",
 					"$(BUILT_PRODUCTS_DIR)/libluafilesystem.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaCards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -6966,8 +6966,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = A6QFRGXX8S;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6987,8 +6987,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				DEVELOPMENT_TEAM = A6QFRGXX8S;
 				INFOPLIST_FILE = "TestApp-Enterprise/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -7001,8 +7001,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
@@ -7025,8 +7025,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -7047,6 +7047,7 @@
 		A4E076371BD2C5A3003A733A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -7054,6 +7055,7 @@
 		A4E076381BD2C5A3003A733A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -7063,8 +7065,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = A6QFRGXX8S;
@@ -7090,8 +7092,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = A6QFRGXX8S;
@@ -7116,7 +7118,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -7138,7 +7140,7 @@
 					"-force_load",
 					"$(BUILT_PRODUCTS_DIR)/libluafilesystem.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.CoronaCards;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaCards;
 				PRODUCT_NAME = CoronaCards;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -7152,7 +7154,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -7173,7 +7175,7 @@
 					"-force_load",
 					"$(BUILT_PRODUCTS_DIR)/libluafilesystem.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.CoronaCards;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaCards;
 				PRODUCT_NAME = CoronaCards;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
