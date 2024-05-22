@@ -374,7 +374,7 @@ jobs:
 
   CoronaCards-iOS:
     needs: source-code
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - run: CDR="$(basename "$(pwd)")" ; cd .. ; rm -rf "$CDR" ; mkdir -p "$CDR" ; cd "$CDR"
       - name: Get processed code
