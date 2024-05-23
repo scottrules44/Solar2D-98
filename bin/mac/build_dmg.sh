@@ -120,6 +120,11 @@ then
 	ditto -v -X "$2/${RESOURCE_DIR}" "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}"
 fi
 
+
+# Copy Skin workaround
+mkdir -p "$TMPPATH/${PRODUCT_DIR}/${PRODUCT_DIR}/Corona Simulator.app/Contents/Resources/Skins"
+cp -v "$SRCROOT"/platform/resources/Skins/* "$TMPPATH/${PRODUCT_DIR}/${PRODUCT_DIR}/Corona Simulator.app/Contents/Resources/Skins"
+
 mkdir -p "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/Android"
 cp -v -X "$SRCROOT"/platform/android/resources/debug.keystore "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/Android/"
 

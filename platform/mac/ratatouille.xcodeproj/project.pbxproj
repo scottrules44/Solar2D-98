@@ -8627,6 +8627,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "../apple/CoronaResources-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.CoronaResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -8647,6 +8648,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "../apple/CoronaResources-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.CoronaResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -8667,6 +8669,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "../apple/CoronaResources-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.CoronaResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = bundle;
 			};

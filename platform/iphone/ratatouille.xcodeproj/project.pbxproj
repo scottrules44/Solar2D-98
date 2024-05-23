@@ -5279,6 +5279,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "../apple/CoronaResources-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.coronalabs.CoronaResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
@@ -5307,6 +5308,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "../apple/CoronaResources-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.scotthtech.coronaDev;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.coronalabs.CoronaResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
