@@ -121,10 +121,6 @@ then
 fi
 
 
-# Copy Skin workaround
-mkdir -p "$TMPPATH/${PRODUCT_DIR}/${PRODUCT_DIR}/Corona Simulator.app/Contents/Resources/Skins"
-cp -v "$SRCROOT"/platform/resources/Skins/* "$TMPPATH/${PRODUCT_DIR}/${PRODUCT_DIR}/Corona Simulator.app/Contents/Resources/Skins"
-
 mkdir -p "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/Android"
 cp -v -X "$SRCROOT"/platform/android/resources/debug.keystore "$TMPPATH/${PRODUCT_DIR}/${RESOURCE_DIR}/Android/"
 
@@ -217,6 +213,9 @@ xcrun SetFile -a E "$TMPPATH/${PRODUCT_DIR}/Documentation.html" # hide extension
 
 )
 
+# Copy Skin workaround
+mkdir -p "$TMPPATH/${PRODUCT_DIR}/${PRODUCT_DIR}/Corona Simulator.app/Contents/Resources/Skins"
+cp -v "$SRCROOT"/platform/resources/Skins/* "$TMPPATH/${PRODUCT_DIR}/${PRODUCT_DIR}/Corona Simulator.app/Contents/Resources/Skins"
 
 # this causes hdiutil create to generate corrupt filesystems for some reason
 # ditto "$SRCROOT/platform/resources/icons/Applications-CoronaSDK-DS_Store" "$TMPPATH"/${PRODUCT_DIR}/.DS_Store
