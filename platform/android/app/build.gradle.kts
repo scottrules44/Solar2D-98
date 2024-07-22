@@ -193,6 +193,7 @@ android {
         isCheckReleaseBuilds = true
     }
     compileSdk = 34
+    namespace ="com.corona.app"
     defaultConfig {
         applicationId = coronaAppPackage
         targetSdk = 34

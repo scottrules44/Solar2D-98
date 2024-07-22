@@ -5,7 +5,7 @@ plugins {
 android {
     ndkVersion = "18.1.5063045"
     compileSdk = 34
-
+    namespace="com.ansca.corona"
     defaultConfig {
         minSdk = 15
         targetSdk = 34
