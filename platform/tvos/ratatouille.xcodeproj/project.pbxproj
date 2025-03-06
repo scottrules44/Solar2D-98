@@ -590,9 +590,8 @@
 		AA2C69FA29147C9D0093B0BE /* kernel_filter_blurLinearHorizontal_gl.lua in Sources */ = {isa = PBXBuildFile; fileRef = AA2C69F829147C4E0093B0BE /* kernel_filter_blurLinearHorizontal_gl.lua */; };
 		AA2C69FB29147C9D0093B0BE /* kernel_filter_blurLinearVertical_gl.lua in Sources */ = {isa = PBXBuildFile; fileRef = AA2C69BB29147C4E0093B0BE /* kernel_filter_blurLinearVertical_gl.lua */; };
 		AA76CF15272CB55000CE3F89 /* CoronaObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2ED7CE2708257E00CEE021 /* CoronaObjects.cpp */; };
-		AA2C6AF6291C37690093B0BE /* CoronaMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2C6AB9291C37690093B0BE /* CoronaMemory.cpp */; };
-		AAF349EB29EFC61C00076706 /* Rtt_Profiling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF349AE29EFC61C00076706 /* Rtt_Profiling.cpp */; };
 		AAD3E2452B0BECE2000A4D45 /* Rtt_ObjectHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD3E2432B0BECBB000A4D45 /* Rtt_ObjectHandle.cpp */; };
+		AAF349EB29EFC61C00076706 /* Rtt_Profiling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF349AE29EFC61C00076706 /* Rtt_Profiling.cpp */; };
 		AAF34AD529F9DFB800076706 /* Rtt_FormatExtensionList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34AD329F9DF9E00076706 /* Rtt_FormatExtensionList.cpp */; };
 		AAF34AD629F9DFB900076706 /* Rtt_FormatExtensionList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34AD329F9DF9E00076706 /* Rtt_FormatExtensionList.cpp */; };
 		AAF34ADB29F9DFDB00076706 /* Rtt_TextureResourceCapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34AD929F9DFDB00076706 /* Rtt_TextureResourceCapture.cpp */; };
@@ -2577,8 +2576,6 @@
 		AA2ED7CE2708257E00CEE021 /* CoronaObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CoronaObjects.cpp; path = ../../librtt/Corona/CoronaObjects.cpp; sourceTree = "<group>"; };
 		AAD3E2432B0BECBB000A4D45 /* Rtt_ObjectHandle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Rtt_ObjectHandle.cpp; path = ../../librtt/Display/Rtt_ObjectHandle.cpp; sourceTree = "<group>"; };
 		AAD3E2442B0BECBB000A4D45 /* Rtt_ObjectHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Rtt_ObjectHandle.h; path = ../../librtt/Display/Rtt_ObjectHandle.h; sourceTree = "<group>"; };
-		AA2C6AB9291C37690093B0BE /* CoronaMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CoronaMemory.cpp; path = ../../librtt/Corona/CoronaMemory.cpp; sourceTree = "<group>"; };
-		AA2C6AF5291C37690093B0BE /* CoronaMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoronaMemory.h; path = ../../librtt/Corona/CoronaMemory.h; sourceTree = "<group>"; };
 		AAF349AE29EFC61C00076706 /* Rtt_Profiling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rtt_Profiling.cpp; path = ../../librtt/Rtt_Profiling.cpp; sourceTree = "<group>"; };
 		AAF349EA29EFC61C00076706 /* Rtt_Profiling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rtt_Profiling.h; path = ../../librtt/Rtt_Profiling.h; sourceTree = "<group>"; };
 		AAF34A9729F9DF9E00076706 /* Rtt_FormatExtensionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rtt_FormatExtensionList.h; path = ../../librtt/Renderer/Rtt_FormatExtensionList.h; sourceTree = "<group>"; };
@@ -4802,7 +4799,7 @@
 					};
 					A4AD17301BAA0D8F00BCF507 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = BG2J43EA88;
+						DevelopmentTeam = A6QFRGXX8S;
 						ProvisioningStyle = Manual;
 					};
 					A4AD17521BAA14A600BCF507 = {
@@ -4822,7 +4819,7 @@
 					};
 					A4E075901BD1BC09003A733A = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = BG2J43EA88;
+						DevelopmentTeam = A6QFRGXX8S;
 						ProvisioningStyle = Manual;
 					};
 					A4E075BE1BD1C3E0003A733A = {
@@ -4835,7 +4832,7 @@
 						CreatedOnToolsVersion = 7.1;
 					};
 					F5C5E0D3251E112100217C19 = {
-						DevelopmentTeam = BG2J43EA88;
+						DevelopmentTeam = A6QFRGXX8S;
 						ProvisioningStyle = Manual;
 					};
 					F5C5E103251E114A00217C19 = {
@@ -6739,11 +6736,13 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = A6QFRGXX8S;
 				INFOPLIST_FILE = template/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.template;
+				PRODUCT_BUNDLE_IDENTIFIER = tech.scotth.coronaPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = tvos;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "corona plugin TV";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = ../../librtt;
@@ -6759,11 +6758,13 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = A6QFRGXX8S;
 				INFOPLIST_FILE = template/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.template;
+				PRODUCT_BUNDLE_IDENTIFIER = tech.scotth.coronaPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = tvos;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "corona plugin TV";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = ../../librtt;
@@ -6929,6 +6930,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = A6QFRGXX8S;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -6964,6 +6966,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = A6QFRGXX8S;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -7091,15 +7094,17 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = A6QFRGXX8S;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					Rtt_MetalANGLE,
 				);
 				INFOPLIST_FILE = template/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.template;
+				PRODUCT_BUNDLE_IDENTIFIER = tech.scotth.coronaPlugin;
 				PRODUCT_NAME = template;
 				PROVISIONING_PROFILE_SPECIFIER = tvos;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "corona plugin TV";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = ../../librtt;
@@ -7115,15 +7120,17 @@
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = BG2J43EA88;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = A6QFRGXX8S;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					Rtt_MetalANGLE,
 				);
 				INFOPLIST_FILE = template/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.coronalabs.template;
+				PRODUCT_BUNDLE_IDENTIFIER = tech.scotth.coronaPlugin;
 				PRODUCT_NAME = template;
 				PROVISIONING_PROFILE_SPECIFIER = tvos;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=appletvos*]" = "corona plugin TV";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = ../../librtt;
