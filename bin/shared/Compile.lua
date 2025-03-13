@@ -61,10 +61,14 @@ end
 
 local PLATFORM
 local CORONA_ROOT
+local SKIP_PNG_OPTIMIZATION = false
 
 if args then
 	PLATFORM = args[1]
 	CORONA_ROOT = args[2]
+	if(args[3]) then
+		SKIP_PNG_OPTIMIZATION = args[3] =="true" and true or false
+	end
 end
 
 
@@ -241,12 +245,23 @@ if PLATFORM == "win" then
 	local result = os_execute(CopyResourcesScript)
 	checkError( 0 == tonumber( result ) )
 else
-	local result = os_execute(
-		CopyResourcesScript,
-		CONFIGURATION,
-		escape( CORONA_ASSETS_DIR ),
-		escape( CORONA_TARGET_RESOURCES_DIR ),
-		escape( BIN_DIR ) )
+	local result 
+	if(SKIP_PNG_OPTIMIZATION) then
+		result = os_execute(
+			escape( BIN_DIR .. "/CopyResources.sh" ),
+			CONFIGURATION,
+			escape( CORONA_ASSETS_DIR ),
+			escape( CORONA_TARGET_RESOURCES_DIR ),
+			"--preserve"
+			escape( BIN_DIR ) )
+	else
+		result = os_execute(
+			escape( BIN_DIR .. "/CopyResources.sh" ),
+			CONFIGURATION,
+			escape( CORONA_ASSETS_DIR ),
+			escape( CORONA_TARGET_RESOURCES_DIR ),
+			escape( BIN_DIR ) )
+	end
 	checkError( 0 == tonumber( result ) )
 end
 
