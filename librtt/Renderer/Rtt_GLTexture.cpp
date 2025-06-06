@@ -54,7 +54,13 @@ namespace /*anonymous*/
 #elif !defined( Rtt_OPENGLES )
 			case Texture::kARGB:		internalFormat = GL_RGBA8;		sourceFormat = GL_BGRA;			sourceType = GL_UNSIGNED_INT_8_8_8_8_REV; break;
 			case Texture::kBGRA:		internalFormat = GL_RGBA8;		sourceFormat = GL_BGRA;			sourceType = GL_UNSIGNED_INT_8_8_8_8; break;
-			case Texture::kABGR:		internalFormat = GL_ABGR_EXT;	sourceFormat = GL_ABGR_EXT;		sourceType = GL_UNSIGNED_BYTE; break;
+            #ifdef GL_ABGR_EXT
+            case Texture::kABGR:
+                internalFormat = GL_ABGR_EXT;
+                sourceFormat = GL_ABGR_EXT;
+                sourceType = GL_UNSIGNED_BYTE;
+                break;
+            #endif
 #else
 			// NOTE: These are not available on OpenGL-ES
 			// case Texture::kARGB:		internalFormat = GL_RGBA;		sourceFormat = GL_RGBA;			sourceType = GL_UNSIGNED_BYTE; break;
@@ -119,9 +125,11 @@ GLint CalculateOptimalAlignment(U32 width, GLenum format)
             bytesPerPixel = 3;
             break;
             
-        case GL_RGBA:
-        case GL_BGRA_EXT:
+        
+        #if defined(GL_ABGR_EXT)
         case GL_ABGR_EXT:
+        #endif
+        case GL_RGBA:
             bytesPerPixel = 4;
             break;
             
