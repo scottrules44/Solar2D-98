@@ -27,6 +27,10 @@
 	#define DEBUG_PRINT( ... )
 #endif
 
+
+#if !defined(Rtt_OPENGLES) && !defined(GL_ABGR_EXT)
+#define GL_ABGR_EXT 0x8000
+#endif
 // ----------------------------------------------------------------------------
 
 namespace /*anonymous*/ 
