@@ -129,7 +129,6 @@ GLint CalculateOptimalAlignment(U32 width, GLenum format)
             bytesPerPixel = 4;
             break;
             
-        case GL_ABGR_EXT:
 #ifdef Rtt_NXS_ENV
         case GL_LUMINANCE_ALPHA:
             bytesPerPixel = 2;
