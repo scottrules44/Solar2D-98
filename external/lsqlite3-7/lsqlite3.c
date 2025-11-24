@@ -74,6 +74,10 @@
 #endif
 #endif
 
+#ifndef SQLITE_OMIT_DEPRECATED
+#define SQLITE_OMIT_DEPRECATED
+#endif
+
 #include "sqlite3.h"
 
 /* compile time features */
