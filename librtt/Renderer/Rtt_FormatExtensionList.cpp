@@ -488,11 +488,9 @@ FormatExtensionList::Build( Rtt_Allocator* allocator, const CoronaVertexExtensio
             {
                 ++group.divisor;
             }
-            
-            const unsigned int kWindowSizeLimit = 100; // should be more than enough, i.e. max attribs far less
-            
-            Rtt_ASSERT( attributeData.windowSize < kWindowSizeLimit );
-            
+
+            Rtt_ASSERT( attributeData.windowSize < 100 ); // should be more than enough, i.e. max attribs far less
+
             for (int j = 0; j < attributeData.windowSize; ++j)
             {
                 String* str = Rtt_NEW( allocator, String( allocator, attributeData.name ) );
@@ -648,9 +646,9 @@ FormatExtensionList::ReconcileFormats( Rtt_Allocator* allocator, CommandBuffer *
 }
 
 FormatExtensionList::Iterator::Iterator( const FormatExtensionList* list, GroupFilter filter, IterationPolicy policy )
-:   fList( NULL ),
-    fFilter( filter ),
+:   fFilter( filter ),
     fPolicy( policy ),
+    fList( NULL ),
     fFirstInGroup( 0 ),
     fOffsetInGroup( 0 ),
     fGroupIndex( 0 )
