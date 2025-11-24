@@ -359,7 +359,6 @@
 //
 #if defined( Rtt_NXS_ENV )
 
-#define Rtt_OPENGLES
 #define Rtt_OPENGL_CLIENT_SIDE_ARRAYS 1
 #define Rtt_USE_GLOBAL_VARIABLES
 #define Rtt_VPRINTF_SUPPORTED
