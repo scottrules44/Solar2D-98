@@ -93,7 +93,7 @@ namespace Rtt
 		, fProperties(0)
 	{
 		int size = fHeight * fWidth * 4;
-		fData = (U8*)Rtt_MALLOC(&context, size);
+		fData = (U8*)Rtt_MALLOC(context, size);
 		memset(fData, 0, size);
 		
 		U8* dst = fData;
@@ -357,7 +357,9 @@ namespace Rtt
 		fWidth = w;
 		fHeight = h;
 
-		fData = (U8*)Rtt_MALLOC(&context, fHeight * fWidth);
+		// Use malloc directly since this is called asynchronously from JavaScript
+		// and the allocator is not available in this context
+		fData = (U8*)malloc(fHeight * fWidth);
 		memset(fData, 0, fHeight * fWidth);
 
 		// extract alpha component
