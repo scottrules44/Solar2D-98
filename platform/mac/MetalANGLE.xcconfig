@@ -7,34 +7,43 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //
-// MetalANGLE Configuration for macOS
+// MetalANGLE Configuration for macOS Corona Simulator
 //
-// Include this xcconfig file in your build settings to enable MetalANGLE
-// (Metal-backed OpenGL ES) instead of legacy OpenGL for macOS builds.
+// This xcconfig file enables MetalANGLE (Metal-backed OpenGL ES) instead of
+// legacy OpenGL for macOS builds.
 //
-// Prerequisites:
-// 1. Build MetalANGLE for macOS from external/MetalANGLE:
-//    cd external/MetalANGLE/ios/xcode
-//    ./fetchDependencies.sh
-//    xcodebuild build -project MGLKitSamples.xcodeproj -scheme MetalANGLE_static_mac -sdk macosx -configuration Release
+// Usage:
+// 1. Build MetalANGLE first:
+//    cd platform/mac && ./build_metalangle.sh Release
 //
-// 2. The resulting libMetalANGLE_static_mac.a will be in the derived data build directory
+// 2. In Xcode, select your target and go to Build Settings
 //
-// 3. Include this xcconfig in your target's build settings
+// 3. Set "Base Configurations" to this file, or add these settings manually
+//
+// Note: When using MetalANGLE, do NOT link against OpenGL.framework
 //
 //////////////////////////////////////////////////////////////////////////////
 
 // Enable MetalANGLE preprocessor define
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) Rtt_MetalANGLE=1
+// This triggers conditional compilation in GLView.h/mm and Rtt_MacGLView.h
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) Rtt_MetalANGLE=1 GL_SILENCE_DEPRECATION=1 GLES_SILENCE_DEPRECATION=1
 
 // Header search paths for MetalANGLE
-HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/../../external/MetalANGLE/include $(SRCROOT)/../../external/MetalANGLE/ios/xcode/MGLKit
+// - include/ contains GLES2/gl2.h and EGL headers
+// - ios/xcode/MGLKit contains MGLKit.h, MGLKView.h, etc.
+HEADER_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../external/MetalANGLE/include" "$(SRCROOT)/../../external/MetalANGLE/ios/xcode/MGLKit"
 
 // Library search paths for MetalANGLE static library
-LIBRARY_SEARCH_PATHS = $(inherited) $(SRCROOT)/../../external/MetalANGLE/build
+LIBRARY_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../external/MetalANGLE/build"
 
-// Link against MetalANGLE static library and required frameworks
-OTHER_LDFLAGS = $(inherited) -lMetalANGLE_static_mac -framework Metal -framework MetalKit -framework IOSurface -framework QuartzCore
+// Framework search paths
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../external/MetalANGLE/build"
 
-// Note: When using MetalANGLE, you should NOT link against OpenGL.framework
-// The OpenGL ES calls will be translated to Metal by MetalANGLE
+// Link against MetalANGLE static library and required Metal frameworks
+// -lMetalANGLE_static_mac: The MetalANGLE static library
+// Metal.framework: Apple's Metal graphics framework
+// MetalKit.framework: Metal helper classes
+// IOSurface.framework: For texture/buffer sharing
+// QuartzCore.framework: For CALayer (MGLLayer inherits from CALayer)
+// CoreVideo.framework: For video texture handling
+OTHER_LDFLAGS = $(inherited) -lMetalANGLE_static_mac -framework Metal -framework MetalKit -framework IOSurface -framework QuartzCore -framework CoreVideo
