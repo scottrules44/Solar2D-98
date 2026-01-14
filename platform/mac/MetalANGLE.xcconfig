@@ -1,0 +1,40 @@
+//////////////////////////////////////////////////////////////////////////////
+//
+// This file is part of the Corona game engine.
+// For overview and more information on licensing please refer to README.md
+// Home page: https://github.com/coronalabs/corona
+// Contact: support@coronalabs.com
+//
+//////////////////////////////////////////////////////////////////////////////
+//
+// MetalANGLE Configuration for macOS
+//
+// Include this xcconfig file in your build settings to enable MetalANGLE
+// (Metal-backed OpenGL ES) instead of legacy OpenGL for macOS builds.
+//
+// Prerequisites:
+// 1. Build MetalANGLE for macOS from external/MetalANGLE:
+//    cd external/MetalANGLE/ios/xcode
+//    ./fetchDependencies.sh
+//    xcodebuild build -project MGLKitSamples.xcodeproj -scheme MetalANGLE_static_mac -sdk macosx -configuration Release
+//
+// 2. The resulting libMetalANGLE_static_mac.a will be in the derived data build directory
+//
+// 3. Include this xcconfig in your target's build settings
+//
+//////////////////////////////////////////////////////////////////////////////
+
+// Enable MetalANGLE preprocessor define
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) Rtt_MetalANGLE=1
+
+// Header search paths for MetalANGLE
+HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/../../external/MetalANGLE/include $(SRCROOT)/../../external/MetalANGLE/ios/xcode/MGLKit
+
+// Library search paths for MetalANGLE static library
+LIBRARY_SEARCH_PATHS = $(inherited) $(SRCROOT)/../../external/MetalANGLE/build
+
+// Link against MetalANGLE static library and required frameworks
+OTHER_LDFLAGS = $(inherited) -lMetalANGLE_static_mac -framework Metal -framework MetalKit -framework IOSurface -framework QuartzCore
+
+// Note: When using MetalANGLE, you should NOT link against OpenGL.framework
+// The OpenGL ES calls will be translated to Metal by MetalANGLE

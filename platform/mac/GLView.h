@@ -8,6 +8,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #import <AppKit/AppKit.h>
+#import "Rtt_MacGLView.h"
 #import "GLViewDelegate.h"
 
 //#import <AppKit/NSView.h>
@@ -23,7 +24,7 @@ namespace Rtt
 @class NSImage;
 @class SPILDTopLayerView;
 
-@interface GLView : NSOpenGLView
+@interface GLView : Rtt_GLViewBaseClass
 {
 	Rtt::Runtime* fRuntime;
 	NSPoint fStartPosition;
@@ -64,7 +65,9 @@ namespace Rtt
 @property (nonatomic, assign) BOOL cursorHidden;
 @property (nonatomic, assign) NSPoint initialLocation;
 
+#ifndef Rtt_MetalANGLE
 + (NSOpenGLPixelFormat*) basicPixelFormat;
+#endif
 
 - (void)setDelegate:(id< GLViewDelegate >)delegate;
 

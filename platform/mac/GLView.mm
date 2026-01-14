@@ -10,11 +10,17 @@
 #include "Core/Rtt_Build.h"
 
 #import "GLView.h"
+#import "Rtt_MacGLView.h"
+
+#ifdef Rtt_MetalANGLE
+#include <GLES2/gl2.h>
+#else
 #include <OpenGL/gl.h>
+#import <AppKit/NSOpenGL.h>
+#endif
 
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSEvent.h>
-#import <AppKit/NSOpenGL.h>
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
 
@@ -161,64 +167,22 @@
 @synthesize cursorHidden;
 @synthesize initialLocation;
 
-// pixel format definition
+#ifndef Rtt_MetalANGLE
+// pixel format definition (OpenGL only)
 + (NSOpenGLPixelFormat*) basicPixelFormat
 {
-
-//#if 0
-
-
     NSOpenGLPixelFormatAttribute attributes [] = {
         NSOpenGLPFANoRecovery,
 		NSOpenGLPFADoubleBuffer,	// double buffered
         NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
 		NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute)1,
 		NSOpenGLPFASamples,(NSOpenGLPixelFormatAttribute)4,
-		
+
         (NSOpenGLPixelFormatAttribute)0
     };
     return [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
-
-/*
-#else
-
-	CGLPixelFormatAttribute attributes[] =
-	{
-		kCGLPFADoubleBuffer,
-		kCGLPFADepthSize, (CGLPixelFormatAttribute)16,
-		kCGLPFAColorSize, (CGLPixelFormatAttribute)24,
-		kCGLPFAAlphaSize, (CGLPixelFormatAttribute)8,
-		kCGLPFAAccelerated,
-		kCGLPFANoRecovery,
-
-		// Need to explicitly request OpenGL 3.2 Core (otherwise, we use 2.1 legacy)
-	//	kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_3_2_Core,
-		// kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_Legacy,
-		(CGLPixelFormatAttribute)0
-	};
-    return [[NSOpenGLPixelFormat alloc] initWithCGLPixelFormatObj:attributes];
-
-NSOpenGLPixelFormatAttribute attributes1 [] = {
-        NSOpenGLPFAWindow,
-        NSOpenGLPFADoubleBuffer,	// double buffered
-        NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
-		NSOpenGLPFAColorSize, (NSOpenGLPixelFormatAttribute)24,
-		NSOpenGLPFAAlphaSize, (NSOpenGLPixelFormatAttribute)8,
-		NSOpenGLPFAAccelerated,
-		NSOpenGLPFANoRecovery,
-		
-		//NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute)1,
-		//NSOpenGLPFASamples,(NSOpenGLPixelFormatAttribute)2,
-		
-        (NSOpenGLPixelFormatAttribute)nil
-    };
-    return [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes1] autorelease];
-	
-//#endif
-*/
-
-
 }
+#endif
 
 - (void) setRuntime:(Rtt::Runtime *)runtime
 {
@@ -234,10 +198,18 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 - (id)initWithFrame:(NSRect)frameRect
 {
     NSDEBUG(@"GLView: initWithFrame: %@", NSStringFromRect(frameRect));
-	NSOpenGLPixelFormat * pf = [GLView basicPixelFormat];
 
+#ifdef Rtt_MetalANGLE
+	// Create MetalANGLE context
+	MGLContext *context = [[MGLContext alloc] initWithAPI:kMGLRenderingAPIOpenGLES2];
+	self = [super initWithFrame:frameRect context:context];
+	[context release];
+#else
+	// Create OpenGL pixel format and view
+	NSOpenGLPixelFormat * pf = [GLView basicPixelFormat];
 	self = [super initWithFrame: frameRect pixelFormat: pf];
-	
+#endif
+
 	if ( self )
 	{
 		isReady = NO;
@@ -251,17 +223,24 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
         inFullScreenTransition = NO;
         allowOverlay = YES; // this can be set to NO externally to disallow graphically showing the
                             // suspended state (e.g. when the Shift key is down)
-		
+
 		nativeFrameRect = frameRect;
         swapped = NO;
         isSimulatorView = NO;
 
+#ifdef Rtt_MetalANGLE
+		// MetalANGLE setup - configure drawable properties
+		self.drawableDepthFormat = MGLDrawableDepthFormat24;
+		self.drawableMultisample = MGLDrawableMultisample4X;
+		[self setWantsLayer:YES];
+#else
 		// It seems we need to set wantsLayer on macOS 10.12 or native display objects don't appear
 		// (we avoid it on earlier versions because it has performance issues with OpenGL views)
 		if (NSAppKitVersionNumber >= NSAppKitVersionNumber10_12)
 		{
 			[self setWantsLayer:YES];
 		}
+#endif
 
 		// This needs to be true or else we need to swap the width and height in nativeFrameRect
 		// (see [self setOrientation:])
@@ -279,7 +258,7 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		lastTouchPressure = Rtt::TouchEvent::kPressureInvalid;
 #endif
 	}
-	
+
 	return self;
 }
 
@@ -293,17 +272,31 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 
 	[super dealloc];
 }
+#ifndef Rtt_MetalANGLE
+// OpenGL-specific reshape (NSOpenGLView override)
 - (void) reshape
-{	
+{
 	[super reshape];
-	
 }
+#endif
+// Make the rendering context current
+- (void) makeContextCurrent
+{
+#ifdef Rtt_MetalANGLE
+	[MGLContext setCurrentContext:self.context forLayer:self.glLayer];
+#else
+	[[self openGLContext] makeCurrentContext];
+#endif
+}
+
+#ifndef Rtt_MetalANGLE
+// OpenGL-specific preparation (called automatically by NSOpenGLView)
 - (void) prepareOpenGL
 {
     NSDEBUG(@"XXX: GLView: prepareOpenGL: fRuntime %p, self.isReady %s", fRuntime, (self.isReady ? "YES" : "NO"));
 	//[super prepareOpenGL];
 
-	[[self openGLContext] makeCurrentContext];
+	[self makeContextCurrent];
 
 	Rtt::Display *display = NULL;
 
@@ -324,9 +317,9 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		glClearColor( 0.0, 0.0, 0.0, 1.0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 //        [[self openGLContext] flushBuffer];
-		
+
 		self.isReady = YES;
-		
+
 		[fDelegate didPrepareOpenGLContext:self];
 	}
 
@@ -340,6 +333,48 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		}
 	}
 }
+#endif
+
+#ifdef Rtt_MetalANGLE
+// MetalANGLE-specific preparation
+- (void) prepareMetalANGLE
+{
+    NSDEBUG(@"XXX: GLView: prepareMetalANGLE: fRuntime %p, self.isReady %s", fRuntime, (self.isReady ? "YES" : "NO"));
+
+	[self makeContextCurrent];
+
+	Rtt::Display *display = NULL;
+
+	if ( fRuntime != NULL && fRuntime->IsProperty(Rtt::Runtime::kIsApplicationLoaded) )
+	{
+		display = static_cast<Rtt::Display*>(&fRuntime->GetDisplay());
+        if ( display != NULL && (&display->GetRenderer()) != NULL )
+		{
+			display->GetRenderer().ReleaseGPUResources();
+		}
+	}
+
+	if (self.isReady == NO)
+	{
+		glClearColor( 0.0, 0.0, 0.0, 1.0 );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+		self.isReady = YES;
+
+		[fDelegate didPrepareOpenGLContext:self];
+	}
+
+	if ( fRuntime != NULL && fRuntime->IsProperty(Rtt::Runtime::kIsApplicationLoaded) )
+	{
+		if ( display )
+		{
+			fRuntime->SetContentOrientation( fOrientation );
+			display->GetRenderer().Initialize();
+			[self invalidate];
+		}
+	}
+}
+#endif
 
 - (void)drawRect:(NSRect)rect
 {
@@ -356,18 +391,20 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		[self invalidate];
 	}
 
-	[[self openGLContext] makeCurrentContext];
+	[self makeContextCurrent];
 
-    
-    
 	// This should be called by the layer, not NSTimer!!!
 	// That's b/c the OGL context is valid and ready for new OGL commands
 	if ( isReady && fRuntime != NULL && fRuntime->IsProperty(Rtt::Runtime::kIsApplicationLoaded))
 	{
 		fRuntime->Render();
 	}
-    
+
+#ifdef Rtt_MetalANGLE
+	[self.context present:self.glLayer];
+#else
     [[self openGLContext] flushBuffer];
+#endif
 }
 
 - (void)setDelegate:(id< GLViewDelegate >)delegate
@@ -383,7 +420,11 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		fRuntime->GetDisplay().Invalidate();
 	}
 
+#ifdef Rtt_MetalANGLE
+	[self setNeedsDisplay:YES];
+#else
 	[self update];
+#endif
 }
 
 - (BOOL) isOpaque
@@ -1069,6 +1110,14 @@ static U32 *sTouchId = (U32*)(& kTapTolerance); // any arbitrary pointer value w
 	// This is needed for systems that _only_ have Retina screens and may not get all the
 	// notifications multi-display systems do
 	scaleFactor = [[self window] backingScaleFactor];
+
+#ifdef Rtt_MetalANGLE
+	// Initialize MetalANGLE when the view is added to a window
+	if ([self window] != nil && !self.isReady)
+	{
+		[self prepareMetalANGLE];
+	}
+#endif
 }
 
 - (void)mouseMoved:(NSEvent *)event
