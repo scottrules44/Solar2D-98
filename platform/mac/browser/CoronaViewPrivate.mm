@@ -7,7 +7,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
+#ifndef Rtt_MetalANGLE
 #import <AppKit/NSOpenGL.h>
+#endif
 
 #include "Core/Rtt_Build.h"
 
@@ -544,11 +546,13 @@ Rtt_EXPORT const luaL_Reg* Rtt_GetCustomModulesList()
     [self addSubview:_GLView];
     [_GLView release];
 
-    [_GLView setDelegate:self];
+    [_GLView setCoronaDelegate:self];
 
     [_GLView setOrientation:Rtt::DeviceOrientation::kUpright];  // default
 
+#ifndef Rtt_MetalANGLE
 	[_GLView setWantsBestResolutionOpenGLSurface:YES];
+#endif
 
     _platform = NULL;
     _runtime = NULL;

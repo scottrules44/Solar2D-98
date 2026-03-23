@@ -7,7 +7,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
+#ifdef Rtt_MetalANGLE
+#import <MGLKit/MGLKit.h>
+#else
 #import <AppKit/AppKit.h>
+#endif
 #import "GLViewDelegate.h"
 
 //#import <AppKit/NSView.h>
@@ -18,19 +22,23 @@ namespace Rtt
 {
 	class ApplePlatform;
 	class Runtime;
-} 
+}
 
 @class NSImage;
 @class SPILDTopLayerView;
 
+#ifdef Rtt_MetalANGLE
+@interface GLView : MGLKView
+#else
 @interface GLView : NSOpenGLView
+#endif
 {
 	Rtt::Runtime* fRuntime;
 	NSPoint fStartPosition;
 	float fFirstClickTime;
 	NSTimeInterval fTapDelay;
 
-	id< GLViewDelegate > fDelegate;
+	id< GLViewDelegate > fCoronaDelegate;
 	U8 fNumTaps;
 	Rtt::DeviceOrientation::Type fOrientation;
 
@@ -64,9 +72,11 @@ namespace Rtt
 @property (nonatomic, assign) BOOL cursorHidden;
 @property (nonatomic, assign) NSPoint initialLocation;
 
+#ifndef Rtt_MetalANGLE
 + (NSOpenGLPixelFormat*) basicPixelFormat;
+#endif
 
-- (void)setDelegate:(id< GLViewDelegate >)delegate;
+- (void)setCoronaDelegate:(id< GLViewDelegate >)delegate;
 
 // This method will force the Corona OpenGL renderer to redraw everything.
 - (void) invalidate;

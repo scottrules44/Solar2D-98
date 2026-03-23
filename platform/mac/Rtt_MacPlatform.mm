@@ -47,7 +47,12 @@
 #import <AppKit/NSAlert.h>
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSFontManager.h>
+#ifndef Rtt_MetalANGLE
 #import <AppKit/NSOpenGL.h>
+#endif
+#ifdef Rtt_MetalANGLE
+#import <MGLKit/MGLKit.h>
+#endif
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSWorkspace.h>
 #import <Foundation/NSString.h>
@@ -574,15 +579,16 @@ MacPlatform::SaveBitmap( PlatformBitmap* bitmap, NSURL* url ) const
 //	const size_t kBitsPerComponent = 8;
 
 	// TODO: Should this depend on bitmap->GetFormat()
-	Rtt_ASSERT( bitmap->GetFormat() == PlatformBitmap::kBGRA );
+	Rtt_ASSERT( bitmap->GetFormat() == PlatformBitmap::kBGRA
+				|| bitmap->GetFormat() == PlatformBitmap::kABGR );
 	// Bug 4921: I don't understand this, but changing kCGImageAlphaPremultipliedFirst to kCGImageAlphaNoneSkipFirst fixes the white box issue.
 
 	//Preserve previous jpeg save functionality (black background)
 	//If we're saving to jpeg, set the src info and dest info to the same
     CGBitmapInfo srcBitmapInfo = kCGImageAlphaNoneSkipFirst;
     CGBitmapInfo destBitMapInfo = kCGImageAlphaNoneSkipFirst;
-    
-	
+
+
 	//If we're saving to png with alpha support then set the src info and dest
 	//info to handle alpha at the source and alpha destination
     bool enablePngAlphaSave = false;
@@ -590,7 +596,7 @@ MacPlatform::SaveBitmap( PlatformBitmap* bitmap, NSURL* url ) const
     if ( [lowercase hasSuffix:@"png"] )
     {
         enablePngAlphaSave = true;
-		
+
 		//This is the correct order to save with alpha channel, but it looks like some display objects
 		//like polylines are working differently in the alpha channel in which case we don't want
 		//kCGImageAlphaNoneSkipFirst may be the correct choice
@@ -1551,14 +1557,36 @@ MacPlatform::BeginRuntime( const Runtime& runtime ) const
 	{
 		pthread_mutex_lock( & fMutex );
 
+#ifdef Rtt_MetalANGLE
+		static int sBeginCount = 0;
+		sBeginCount++;
+		if (sBeginCount <= 10 || sBeginCount % 200 == 0)
+		{
+			NSLog(@"[MGL-DBG] BeginRuntime[%d]: kRenderAsync=%d fView=%p context=%p glLayer=%p",
+				  sBeginCount, runtime.IsProperty( Runtime::kRenderAsync ),
+				  fView, [fView context], [fView glLayer]);
+		}
+		[fView setNeedsDisplay:YES];
+#else
 		// calls setNeedDisplay
 		[fView update];
+#endif
 
 		// When async, we do not guarantee the context is current
 		// unless we're in the Runtime::Render() call.
 		if ( runtime.IsProperty( Runtime::kRenderAsync ) )
 		{
+#ifdef Rtt_MetalANGLE
+			// Use the layer-aware variant to ensure MetalANGLE binds to the
+			// correct Metal drawable surface instead of the dummy CALayer surface.
+			BOOL result = [MGLContext setCurrentContext:[fView context] forLayer:[fView glLayer]];
+			if (sBeginCount <= 10 || sBeginCount % 200 == 0)
+			{
+				NSLog(@"[MGL-DBG] BeginRuntime[%d]: setCurrentContext result=%d", sBeginCount, result);
+			}
+#else
 			[[fView openGLContext] makeCurrentContext];
+#endif
 		}
 	}
 }

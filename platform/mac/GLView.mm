@@ -10,11 +10,17 @@
 #include "Core/Rtt_Build.h"
 
 #import "GLView.h"
+#ifdef Rtt_MetalANGLE
+#import <MGLKit/MGLKit.h>
+#include <GLES2/gl2.h>
+#import <QuartzCore/CAMetalLayer.h>
+#else
 #include <OpenGL/gl.h>
+#import <AppKit/NSOpenGL.h>
+#endif
 
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSEvent.h>
-#import <AppKit/NSOpenGL.h>
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
 
@@ -161,6 +167,7 @@
 @synthesize cursorHidden;
 @synthesize initialLocation;
 
+#ifndef Rtt_MetalANGLE
 // pixel format definition
 + (NSOpenGLPixelFormat*) basicPixelFormat
 {
@@ -174,7 +181,7 @@
         NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
 		NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute)1,
 		NSOpenGLPFASamples,(NSOpenGLPixelFormatAttribute)4,
-		
+
         (NSOpenGLPixelFormatAttribute)0
     };
     return [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
@@ -206,19 +213,20 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		NSOpenGLPFAAlphaSize, (NSOpenGLPixelFormatAttribute)8,
 		NSOpenGLPFAAccelerated,
 		NSOpenGLPFANoRecovery,
-		
+
 		//NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute)1,
 		//NSOpenGLPFASamples,(NSOpenGLPixelFormatAttribute)2,
-		
+
         (NSOpenGLPixelFormatAttribute)nil
     };
     return [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes1] autorelease];
-	
+
 //#endif
 */
 
 
 }
+#endif
 
 - (void) setRuntime:(Rtt::Runtime *)runtime
 {
@@ -234,16 +242,33 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 - (id)initWithFrame:(NSRect)frameRect
 {
     NSDEBUG(@"GLView: initWithFrame: %@", NSStringFromRect(frameRect));
-	NSOpenGLPixelFormat * pf = [GLView basicPixelFormat];
 
+#ifdef Rtt_MetalANGLE
+	// Call the base initWithFrame: (not initWithFrame:context:) to avoid
+	// infinite recursion, since MGLKView's initWithFrame:context: calls
+	// [self initWithFrame:] which would re-enter this method.
+	MGLContext *glContext = [[MGLContext alloc] initWithAPI:kMGLRenderingAPIOpenGLES2];
+	self = [super initWithFrame:frameRect];
+	if (self) {
+		// MGLKView sets autoresizingMask = flexible width+height by default,
+		// but NSOpenGLView (the old base class) defaults to NSViewNotSizable.
+		// CoronaView's setFrameSize: explicitly resizes GLView and then calls
+		// [super setFrameSize:] which triggers auto-resizing. The double resize
+		// produces wrong dimensions. Clear the mask to match NSOpenGLView behavior.
+		self.autoresizingMask = 0;
+		[self setContext:glContext];
+	}
+#else
+	NSOpenGLPixelFormat * pf = [GLView basicPixelFormat];
 	self = [super initWithFrame: frameRect pixelFormat: pf];
-	
+#endif
+
 	if ( self )
 	{
 		isReady = NO;
 
 		fRuntime = NULL;
-		fDelegate = nil;
+		fCoronaDelegate = nil;
 		[self initCommon];
         fCursorRects = [[NSMutableArray alloc] initWithCapacity:18];
 
@@ -251,17 +276,25 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
         inFullScreenTransition = NO;
         allowOverlay = YES; // this can be set to NO externally to disallow graphically showing the
                             // suspended state (e.g. when the Shift key is down)
-		
+
 		nativeFrameRect = frameRect;
         swapped = NO;
         isSimulatorView = NO;
 
+#ifdef Rtt_MetalANGLE
+		// Configure MetalANGLE drawable properties
+		self.drawableDepthFormat = MGLDrawableDepthFormat16;
+		self.drawableMultisample = MGLDrawableMultisample4X;
+		self.drawableColorFormat = MGLDrawableColorFormatRGBA8888;
+		// MGLKView automatically sets wantsLayer = YES
+#else
 		// It seems we need to set wantsLayer on macOS 10.12 or native display objects don't appear
 		// (we avoid it on earlier versions because it has performance issues with OpenGL views)
 		if (NSAppKitVersionNumber >= NSAppKitVersionNumber10_12)
 		{
 			[self setWantsLayer:YES];
 		}
+#endif
 
 		// This needs to be true or else we need to swap the width and height in nativeFrameRect
 		// (see [self setOrientation:])
@@ -279,42 +312,64 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		lastTouchPressure = Rtt::TouchEvent::kPressureInvalid;
 #endif
 	}
-	
+
 	return self;
 }
 
 - (void)dealloc
 {
+#ifndef Rtt_MetalANGLE
 	[self setLayer:nil];
-	
+#endif
+
 	fRuntime = NULL; // Don't delete. We do not own this pointer
-    
+
     [fCursorRects release];
 
 	[super dealloc];
 }
 - (void) reshape
-{	
-	[super reshape];
-	
-}
-- (void) prepareOpenGL
 {
-    NSDEBUG(@"XXX: GLView: prepareOpenGL: fRuntime %p, self.isReady %s", fRuntime, (self.isReady ? "YES" : "NO"));
-	//[super prepareOpenGL];
+#ifndef Rtt_MetalANGLE
+	[super reshape];
+#endif
+}
 
+#ifdef Rtt_MetalANGLE
+- (void)layout
+{
+	[super layout];
+	// Keep the CAMetalLayer sublayer frame in sync with the parent MGLLayer.
+	// MGLLayer only updates this during present/drawableSize, so we must
+	// also do it on layout to ensure the Metal drawable has a valid size.
+	for (CALayer *sub in self.layer.sublayers) {
+		if ([sub isKindOfClass:[CAMetalLayer class]]) {
+			sub.frame = self.layer.bounds;
+		}
+	}
+}
+#endif
+- (void) prepareGLContext
+{
+    NSDEBUG(@"XXX: GLView: prepareGLContext: fRuntime %p, self.isReady %s", fRuntime, (self.isReady ? "YES" : "NO"));
+
+#ifdef Rtt_MetalANGLE
+	if (!self.context) {
+		return;
+	}
+	[MGLContext setCurrentContext:self.context forLayer:self.glLayer];
+	[self bindDrawable];
+#else
 	[[self openGLContext] makeCurrentContext];
+#endif
 
 	Rtt::Display *display = NULL;
 
 	if ( fRuntime != NULL && fRuntime->IsProperty(Rtt::Runtime::kIsApplicationLoaded) )
 	{
 		display = static_cast<Rtt::Display*>(&fRuntime->GetDisplay());
-		// NSDEBUG(@"Deciding to call display->GetRenderer().ReleaseGPUResources(): display %p, GetRenderer() %p", display, (&display->GetRenderer()));
         if ( display != NULL && (&display->GetRenderer()) != NULL )
 		{
-			// NSDEBUG(@"Calling display->GetRenderer().ReleaseGPUResources(): display %p, GetRenderer() %p", display, (&display->GetRenderer()));
-			// FIXME: this crashes in release builds because (&display->GetRenderer()) is NULL but the test above succeeds
 			display->GetRenderer().ReleaseGPUResources();
 		}
 	}
@@ -323,11 +378,10 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 	{
 		glClearColor( 0.0, 0.0, 0.0, 1.0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-//        [[self openGLContext] flushBuffer];
-		
+
 		self.isReady = YES;
-		
-		[fDelegate didPrepareOpenGLContext:self];
+
+		[fCoronaDelegate didPrepareOpenGLContext:self];
 	}
 
 	if ( fRuntime != NULL && fRuntime->IsProperty(Rtt::Runtime::kIsApplicationLoaded) )
@@ -341,8 +395,125 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 	}
 }
 
+#ifdef Rtt_MetalANGLE
+- (void)viewDidMoveToWindow
+{
+	[super viewDidMoveToWindow];
+
+	if ([self window] != nil)
+	{
+		// We may have called addTrackingRect: in a setFrame: call before we get here
+		if(trackingRectTag) {
+			[self removeTrackingRect:trackingRectTag];
+		}
+		NSRect r = [self bounds];
+		trackingRectTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
+
+		scaleFactor = [[self window] backingScaleFactor];
+
+		// Ensure the Metal layer renders at the correct resolution on Retina displays.
+		if (self.layer)
+		{
+			self.layer.contentsScale = scaleFactor;
+		}
+
+		// The CAMetalLayer sublayer in MGLLayer starts with zero frame.
+		// MGLLayer only updates it during present/drawableSize calls, but
+		// rendering can't start until the layer has a valid size. Force the
+		// sublayer frame to match the parent layer's bounds now.
+		for (CALayer *sub in self.layer.sublayers) {
+			if ([sub isKindOfClass:[CAMetalLayer class]]) {
+				sub.frame = self.layer.bounds;
+				sub.contentsScale = scaleFactor;
+			}
+		}
+
+		// For layer-backed views with custom backing layers (MGLLayer), AppKit's
+		// setNeedsDisplay:YES does not reliably trigger drawRect:. Defer the
+		// first render to after the view hierarchy is fully set up.
+		[self performSelector:@selector(display) withObject:nil afterDelay:0.0];
+	}
+}
+#else
+- (void) prepareOpenGL
+{
+	[self prepareGLContext];
+}
+
+- (void)viewDidMoveToWindow
+{
+	// We may have called addTrackingRect: in a setFrame: call before we get here
+	if(trackingRectTag) {
+		[self removeTrackingRect:trackingRectTag];
+	}
+
+	// Limit mouse events to the view's bounds
+	NSRect r = [self bounds];
+	trackingRectTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
+
+	// This is needed for systems that _only_ have Retina screens and may not get all the
+	// notifications multi-display systems do
+	scaleFactor = [[self window] backingScaleFactor];
+}
+#endif
+
+#ifdef Rtt_MetalANGLE
+// Core rendering method for MetalANGLE. Sets up the GL context, renders, and
+// optionally presents. Called from both -display and -drawRect:.
+- (void)renderMetalFrame:(BOOL)shouldPresent
+{
+	// On first render, perform the deferred GL context preparation.
+	// This cannot happen in viewDidMoveToWindow because the Metal layer
+	// does not have a valid drawable at that point.
+	if (!self.isReady && self.context)
+	{
+		[self prepareGLContext];
+	}
+
+	if ([self inLiveResize] || self.inFullScreenTransition)
+	{
+		[self invalidate];
+	}
+	else if (shouldInvalidate)
+	{
+		[self invalidate];
+	}
+
+	if (!self.context)
+	{
+		return;
+	}
+
+	[MGLContext setCurrentContext:self.context forLayer:self.glLayer];
+	[self bindDrawable];
+
+	if ( isReady && fRuntime != NULL && fRuntime->IsProperty(Rtt::Runtime::kIsApplicationLoaded))
+	{
+		fRuntime->Render();
+	}
+
+	if (shouldPresent)
+	{
+		[self.context present:self.glLayer];
+	}
+}
+
+// Override MGLKView's -display to prevent the double-present in
+// displayAndCapture: (which calls drawRect: then present:).
+// For layer-backed views on macOS, AppKit calls drawRect: through
+// the drawLayer:inContext: path, NOT through display. But if display
+// is called explicitly, we handle it here to avoid the double-present.
+- (void)display
+{
+	[self renderMetalFrame:YES];
+}
+#endif
+
 - (void)drawRect:(NSRect)rect
 {
+#ifdef Rtt_MetalANGLE
+	[self renderMetalFrame:YES];
+#else
     if ([self inLiveResize] || self.inFullScreenTransition)
     {
         // This fixes nasty OpenGL painting artifacts when live resizing
@@ -358,21 +529,18 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 
 	[[self openGLContext] makeCurrentContext];
 
-    
-    
-	// This should be called by the layer, not NSTimer!!!
-	// That's b/c the OGL context is valid and ready for new OGL commands
 	if ( isReady && fRuntime != NULL && fRuntime->IsProperty(Rtt::Runtime::kIsApplicationLoaded))
 	{
 		fRuntime->Render();
 	}
-    
+
     [[self openGLContext] flushBuffer];
+#endif
 }
 
-- (void)setDelegate:(id< GLViewDelegate >)delegate
+- (void)setCoronaDelegate:(id< GLViewDelegate >)delegate
 {
-	fDelegate = delegate;
+	fCoronaDelegate = delegate;
 }
 
 // This method will force the Corona OpenGL renderer to redraw everything.
@@ -383,7 +551,11 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 		fRuntime->GetDisplay().Invalidate();
 	}
 
+#ifdef Rtt_MetalANGLE
+	[self setNeedsDisplay:YES];
+#else
 	[self update];
+#endif
 }
 
 - (BOOL) isOpaque
@@ -1053,22 +1225,6 @@ static U32 *sTouchId = (U32*)(& kTapTolerance); // any arbitrary pointer value w
 			   (modifierFlags & NSControlKeyMask),
 			   (modifierFlags & NSCommandKeyMask) );
 	[self dispatchEvent: ( & e )];
-}
-
-- (void)viewDidMoveToWindow
-{
-	// We may have called addTrackingRect: in a setFrame: call before we get here
-	if(trackingRectTag) {
-		[self removeTrackingRect:trackingRectTag];
-	}
-
-	// Limit mouse events to the view's bounds
-	NSRect r = [self bounds];
-	trackingRectTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
-
-	// This is needed for systems that _only_ have Retina screens and may not get all the
-	// notifications multi-display systems do
-	scaleFactor = [[self window] backingScaleFactor];
 }
 
 - (void)mouseMoved:(NSEvent *)event

@@ -46,9 +46,38 @@
 
 
 #import <QuartzCore/QuartzCore.h>
+#ifdef Rtt_MetalANGLE
+#import <Metal/Metal.h>
+#else
 #include <OpenGL/gl.h>
+#endif
+
+#ifdef Rtt_MetalANGLE
+
+// Query max texture size directly from Metal device.
+// We cannot use a standalone MGLContext for GL queries because MetalANGLE's
+// dummy surface (plain CALayer) doesn't work with the Metal backend on macOS.
+static size_t Internal_GetMaxTextureSize()
+{
+	static dispatch_once_t once;
+	static size_t s_maxTextureSize = 2048;
+
+	dispatch_once(&once, ^{
+		id<MTLDevice> device = MTLCreateSystemDefaultDevice();
+		if (device)
+		{
+			// All Metal-capable Macs support at least 16384x16384 2D textures.
+			s_maxTextureSize = 16384;
+		}
+	});
+
+	return s_maxTextureSize;
+}
+
+#else
+
 //#include <OpenGL/OpenGL.h>
-// Fallback intended for Snow Leopard headless Macs. On Lion, we don't seem to have a problem creating the main pixel format. 
+// Fallback intended for Snow Leopard headless Macs. On Lion, we don't seem to have a problem creating the main pixel format.
 // (It just doesn't actually render which seems to be an Apple bug.)
 // I also tried avoiding glBlitFramebuffer in this case, but it didn't help.
 static CGLPixelFormatAttribute s_coronaFallbackPixelFormatAttributes[] =
@@ -58,48 +87,27 @@ static CGLPixelFormatAttribute s_coronaFallbackPixelFormatAttributes[] =
 //	kCGLPFAColorSize, (CGLPixelFormatAttribute)24,
 //	kCGLPFAAlphaSize, (CGLPixelFormatAttribute)8,
 	kCGLPFARemotePBuffer, // DTS tells me this is needed for headless Macs
-	// Need to investigate: kCGLPFAAccelerated + kCGLPFANoRecovery must be removed to work on headless Macs and I think we also need kCGLPFAAllowOfflineRenderers.
-	// But this presumably will deny us hardware acceleration.
-	//	kCGLPFAAllowOfflineRenderers,
-	// Apple says 10.7 should always specify the OpenGL profile
-	// However, testing on 10.6, this seems to cause an error.
-	// Things seem to work fine for now on 10.7 without defining it, so I'll disable this for now.
-	// Otherwise we need a runttime check.
-	/*
-	 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_6
-	 #if ESSENTIAL_GL_PRACTICES_SUPPORT_GL3
-	 // Must specify the 3.2 Core Profile to use OpenGL 3.2
-	 //		kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_3_2_Core,
-	 #else
-	 //		kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_Legacy,
-	 #endif
-	 #endif
-	 */
 	(CGLPixelFormatAttribute)0
 };
 
 // We need to create an OpenGL context to query the max texture size because CALayer is limited by that with no direct API to help us.
-// We can't use the Rtt::GPUStream version because the SkinView may be created before an OpenGL context is created or the context may not be set to be the current context.
-// Warning: This may be unreliable for multiple video cards, particulaly if the user moves across screens.
-// Optimization to cache might need to be removed to allow relaunch on a new screen.
 static size_t Internal_GetMaxTextureSize()
 {
 	static dispatch_once_t once;
 	static size_t s_maxTextureSize = 2048;
-	
+
 	dispatch_once(&once, ^{
-		
+
 		CGLPixelFormatObj pixel_format = NULL;
 		GLint num_pixel_formats = 0;
-		
+
 		CGLChoosePixelFormat(s_coronaFallbackPixelFormatAttributes, &pixel_format, &num_pixel_formats);
 		if(NULL == pixel_format)
 		{
 			NSLog(@"Error: Could not choose fallback OpenGL pixel format for SkinView! OpenGL context cannot be created.");
 			return;
 		}
-		
-		
+
 		CGLContextObj temp_context = NULL;
 		CGLError error = CGLCreateContext(pixel_format, NULL, &temp_context);
 		if(kCGLNoError != error)
@@ -107,7 +115,7 @@ static size_t Internal_GetMaxTextureSize()
 			NSLog(@"CGLCreateContext failed to create OpenGL context for SkinView max texture size");
 			return;
 		}
-		
+
 		CGLSetCurrentContext(temp_context);
 		GLint retmax;
 
@@ -115,30 +123,20 @@ static size_t Internal_GetMaxTextureSize()
 		if ( glGetError() != GL_NO_ERROR )
 		{
 			NSLog(@"Failed to get GL_MAX_TEXTURE_SIZE for SkinView");
-
-			s_maxTextureSize = 2048; // Default to 2048
+			s_maxTextureSize = 2048;
 		}
 		else
 		{
 			s_maxTextureSize = retmax;
 		}
-		error = CGLDestroyContext(temp_context);
-		if(kCGLNoError != error)
-		{
-			NSLog(@"CGLDestroyContext for SkinView failed");
-		}
-		
-		error = CGLDestroyPixelFormat(pixel_format);
-		if(kCGLNoError != error)
-		{
-			NSLog(@"CGLDestroyPixelFormat for SkinView failed");
-		}
+		CGLDestroyContext(temp_context);
+		CGLDestroyPixelFormat(pixel_format);
 	});
-	
+
 	return s_maxTextureSize;
-	
-	
 }
+
+#endif
 
 @implementation NSImage (ProportionalScaling)
 // Scott Stevenson http://ns.treehouseideas.com/document.page/498

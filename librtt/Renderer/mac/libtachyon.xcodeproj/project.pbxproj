@@ -352,6 +352,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					Rtt_MAC_ENV,
+					Rtt_MetalANGLE,
+					GL_GLEXT_PROTOTYPES,
 					Rtt_DEBUG,
 					LUA_USE_OBJC_EXCEPTIONS,
 					"$(inherited)",
@@ -363,7 +365,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../..;
+				HEADER_SEARCH_PATHS = (
+					../..,
+					../../../external/MetalANGLE/include,
+				);
 				MACOSX_DEPLOYMENT_TARGET = "$(S2D_MIN_VER_MACOS:default=10.13)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -395,6 +400,8 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					Rtt_MAC_ENV,
+					Rtt_MetalANGLE,
+					GL_GLEXT_PROTOTYPES,
 					NDEBUG,
 					LUA_USE_OBJC_EXCEPTIONS,
 				);
@@ -404,7 +411,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../..;
+				HEADER_SEARCH_PATHS = (
+					../..,
+					../../../external/MetalANGLE/include,
+				);
 				MACOSX_DEPLOYMENT_TARGET = "$(S2D_MIN_VER_MACOS:default=10.13)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = NO;

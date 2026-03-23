@@ -14,7 +14,10 @@
 #include "Renderer/Rtt_GPUResource.h"
 
 #if defined( Rtt_OPENGLES )
-	#if defined( Rtt_IPHONE_ENV ) || defined( Rtt_TVOS_ENV )
+	#if defined( Rtt_MetalANGLE ) && defined( Rtt_MAC_ENV )
+		#include <GLES2/gl2.h>
+		#include <GLES2/gl2ext.h>
+	#elif defined( Rtt_IPHONE_ENV ) || defined( Rtt_TVOS_ENV )
 		#include <OpenGLES/ES2/gl.h>
 		#include <OpenGLES/ES2/glext.h>
 	#elif defined( Rtt_SYMBIAN_ENV )

@@ -88,10 +88,14 @@
 
 	if ([_coronaView settingsIsTransparent])
 	{
+#ifdef Rtt_MetalANGLE
+		[fGLView setValue:@NO forKeyPath:@"glLayer.opaque"];
+#else
 		NSOpenGLContext* context = [fGLView openGLContext];
 		GLint opacity = 0;
 
 		[context setValues: &opacity forParameter: NSOpenGLCPSurfaceOpacity];
+#endif
 	}
 }
 - (id) layerHostView

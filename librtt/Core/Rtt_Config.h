@@ -80,7 +80,12 @@
 
 	#define Rtt_APPLE_ENV
 
-	#define Rtt_OPENGL_EXT_APPLE
+	#if defined( Rtt_MetalANGLE )
+		#define Rtt_OPENGLES
+		// MetalANGLE uses OES extensions, not APPLE
+	#else
+		#define Rtt_OPENGL_EXT_APPLE
+	#endif
 
 	#define Rtt_LUA_LFS
 

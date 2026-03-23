@@ -17,6 +17,10 @@
 
 #import <AppKit/NSView.h>
 
+#ifdef Rtt_MetalANGLE
+#import "GLView.h"
+#endif
+
 // ----------------------------------------------------------------------------
 
 namespace Rtt
@@ -35,10 +39,30 @@ MacViewCallback::operator()()
 {
 	Rtt_ASSERT( fRuntime );
 	(*fRuntime)();
+
+#ifdef Rtt_MetalANGLE
+	static int sCallbackCount = 0;
+	sCallbackCount++;
+	bool sceneValid = fRuntime->GetDisplay().GetScene().IsValid();
+	if (sCallbackCount <= 10 || sCallbackCount % 200 == 0)
+	{
+		NSLog(@"[MGL-DBG] MacViewCallback[%d]: sceneValid=%d view=%p", sCallbackCount, sceneValid, fView);
+	}
+#endif
+
+#ifdef Rtt_MetalANGLE
+	// For MGLKView, setNeedsDisplay:YES does not reliably trigger drawRect:.
+	// Call display directly to force immediate rendering when the scene is dirty.
+	if ( ! fRuntime->GetDisplay().GetScene().IsValid() )
+	{
+		[(GLView*)fView display];
+	}
+#else
 	if ( ! fRuntime->GetDisplay().GetScene().IsValid() )
 	{
 		[fView setNeedsDisplay:YES];
 	}
+#endif
 }
 
 // ----------------------------------------------------------------------------

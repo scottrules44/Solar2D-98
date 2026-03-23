@@ -502,13 +502,13 @@ AppleFileBitmap::GetBitsColor( Rtt_Allocator* context ) const
 
 		const size_t bytesPerRow = width << 2;
 		const CGBitmapInfo bitmapInfo =
-				#ifdef Rtt_MAC_ENV
+				#if defined( Rtt_MAC_ENV ) && !defined( Rtt_MetalANGLE )
 					kCGImageAlphaPremultipliedFirst;
 				#else
 					kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big;
 				#endif
 		void* data = Rtt_CALLOC( context, bytesPerRow, height );
-		
+
 		const size_t bitsPerChannel = 8;
 		CGContextRef bmpContext = CGBitmapContextCreate(
 										data,
@@ -695,7 +695,7 @@ AppleFileBitmap::GetFormat() const
 		return PlatformBitmap::kMask;
 	}
 
-#ifdef Rtt_MAC_ENV
+#if defined( Rtt_MAC_ENV ) && !defined( Rtt_MetalANGLE )
 	return PlatformBitmap::kBGRA;
 #else
 	return PlatformBitmap::kABGR;

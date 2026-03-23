@@ -221,7 +221,8 @@ CommandBuffer::GetGlString( const char *s )
     }
     else if( Rtt_StringCompare( s, "GL_EXTENSIONS" ) == 0 )
     {
-        return (const char *)glGetString( GL_EXTENSIONS );
+        const char * ext = (const char *)glGetString( GL_EXTENSIONS );
+        return ext ? ext : "";
     }
     else
     {

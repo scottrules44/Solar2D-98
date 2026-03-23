@@ -102,6 +102,8 @@ namespace Rtt
 
 	id fPreferencesControllerDelegate;
 	IBOutlet NSWindow* fPreferencesWindow;
+	IBOutlet NSTextField* fRendererStatusLabel;
+	IBOutlet NSButton* fRendererToggleButton;
 	IBOutlet NSWindow* fCustomDeviceWindow;
 
     
@@ -256,6 +258,7 @@ namespace Rtt
 - (BOOL) promptAndRelaunchSimulatorIfUserApproves;
 
 -(IBAction)changedPreference:(id)sender;
+-(IBAction)switchRenderer:(id)sender;
 
 -(void) saveAppSpecificPreference:(NSString *)prefName value:(NSString *)prefValue;
 -(NSString *) restoreAppSpecificPreference:(NSString *)prefName defaultValue:(NSString *)defaultValue;

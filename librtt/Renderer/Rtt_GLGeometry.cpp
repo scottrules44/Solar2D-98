@@ -313,7 +313,9 @@ GLGeometry::SupportsInstancing()
     #endif
         
 		const char * extensions = (const char *)glGetString( GL_EXTENSIONS );
-		
+
+		if (!extensions) extensions = "";
+
     #if defined( GL_EXT_instanced_arrays )
         if (strstr( extensions, "GL_EXT_instanced_arrays" ) && !GL_HAS_SUPPORT())
         {

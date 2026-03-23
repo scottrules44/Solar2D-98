@@ -80,15 +80,21 @@
 		
 		// Tell OpenGL we want it to use the best resolution the current display
 		// is capable of so that we take advantage of Retina screens
+#ifndef Rtt_MetalANGLE
 		[fScreenView setWantsBestResolutionOpenGLSurface:YES];
+#endif
 		[fScreenView setZoomLevel:1.0];
 
 		if (isTransparent)
 		{
+#ifdef Rtt_MetalANGLE
+			fScreenView.glLayer.opaque = NO;
+#else
 			NSOpenGLContext* context = [fScreenView openGLContext];
 			GLint opacity = 0;
 
 			[context setValues: &opacity forParameter: NSOpenGLCPSurfaceOpacity];
+#endif
 
 			[self setBackgroundColor:[NSColor clearColor]];
 		}

@@ -48,7 +48,9 @@
 #import <AppKit/NSAlert.h>
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSFontManager.h>
+#ifndef Rtt_MetalANGLE
 #import <AppKit/NSOpenGL.h>
+#endif
 #import <AppKit/NSWindow.h>
 
 //#import <CoreFoundation/CoreFoundation.h>

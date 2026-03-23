@@ -15,7 +15,9 @@
 
 #include "Rtt_MacDevice.h"
 #import <AppKit/NSView.h>
+#ifndef Rtt_MetalANGLE
 #import <AppKit/NSOpenGLView.h>
+#endif
 #include <Security/Authorization.h>
 
 #include <sys/types.h>

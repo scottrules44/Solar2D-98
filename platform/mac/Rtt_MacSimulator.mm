@@ -29,7 +29,9 @@
 #include "Rtt_Runtime.h"
 
 #import <AppKit/NSApplication.h>
+#ifndef Rtt_MetalANGLE
 #import <AppKit/NSOpenGL.h>
+#endif
 #import <AppKit/NSScreen.h>
 
 #include "Rtt_AppleKeyServices.h"
@@ -255,7 +257,7 @@ MacSimulator::Initialize(
 	GLView* screenView = [[GLView alloc] initWithFrame:screenRect];
 	[screenView autorelease];
 	[screenView setOrientation:GetOrientation()];
-	[screenView setDelegate:delegate];
+	[screenView setCoronaDelegate:delegate];
 
 	SimulatorDeviceWindow* instanceWindow = nil;
 	void (^window_close_handler)(id) = ^(id sender)

@@ -16,6 +16,8 @@
 
 #if defined( Rtt_EGL )
 	#include <EGL/egl.h>
+#elif defined( Rtt_MetalANGLE )
+	#include <EGL/egl.h>
 #endif
 
 #include <cstring>
@@ -206,7 +208,9 @@ GLFrameBufferObject::HasFramebufferBlit( bool * canScale )
 		sCanScale = !!sBlitFramebuffer;
     #elif defined( GL_DRAW_FRAMEBUFFER_NV ) || defined( GL_DRAW_FRAMEBUFFER_ANGLE )
 		const char * extensions = (const char *)glGetString( GL_EXTENSIONS );
-		
+
+		if (!extensions) extensions = "";
+
 		#if defined( GL_DRAW_FRAMEBUFFER_NV )
 			if (strstr( extensions, "GL_NV_framebuffer_blit" ))
 			{

@@ -51,6 +51,11 @@ namespace /*anonymous*/
             case Texture::kRGBA:        internalFormat = GL_RGBA;        sourceFormat = GL_RGBA;            sourceType = GL_UNSIGNED_BYTE; break;
 #if defined( Rtt_WIN_PHONE_ENV )
             case Texture::kBGRA:        internalFormat = GL_BGRA_EXT;    sourceFormat = GL_BGRA_EXT;        sourceType = GL_UNSIGNED_BYTE; break;
+#elif defined( Rtt_MetalANGLE )
+            // MetalANGLE supports GL_EXT_texture_format_BGRA8888 which requires
+            // internalFormat=GL_BGRA_EXT (not GL_RGBA) when format=GL_BGRA_EXT.
+            case Texture::kARGB:        internalFormat = GL_BGRA_EXT;    sourceFormat = GL_BGRA_EXT;        sourceType = GL_UNSIGNED_BYTE; break;
+            case Texture::kBGRA:        internalFormat = GL_BGRA_EXT;    sourceFormat = GL_BGRA_EXT;        sourceType = GL_UNSIGNED_BYTE; break;
 #elif !defined( Rtt_OPENGLES )
             case Texture::kARGB:        internalFormat = GL_RGBA8;        sourceFormat = GL_BGRA;            sourceType = GL_UNSIGNED_INT_8_8_8_8_REV; break;
             case Texture::kBGRA:        internalFormat = GL_RGBA8;        sourceFormat = GL_BGRA;            sourceType = GL_UNSIGNED_INT_8_8_8_8; break;
@@ -200,7 +205,7 @@ GLTexture::Create( CPUResource* resource )
         // It is valid to pass a NULL pointer, so allocation is done either way
         glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, type, data );
         GL_CHECK_ERROR();
-        
+
         fCachedFormat = internalFormat;
         fCachedWidth = w;
         fCachedHeight = h;

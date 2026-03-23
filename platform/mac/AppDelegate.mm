@@ -218,6 +218,7 @@ static NSString* kShowRuntimeErrors = @"showRuntimeErrors";
 static NSString* kRunningExtensions = @"runningExtensions";
 static NSString* kDockIconBounceTime = @"dockIconBounceTime";
 static NSString* kSuppressUnsupportedOSWarning = @"suppressUnsupportedOSWarning";
+static NSString* kUseMetalANGLE = @"useMetalANGLE";
 
 static NSString* kWindowMenuItemName = @"Window";
 static NSString* kBorderlessMenuItemName = @"Borderless";
@@ -1740,7 +1741,23 @@ Rtt_EXPORT const luaL_Reg* Rtt_GetCustomModulesList()
 	{
 		[NSBundle loadNibNamed:@"Preferences" owner:self];
 	}
-    
+
+	// Update renderer status display
+	BOOL isMetal = NO;
+#ifdef Rtt_MetalANGLE
+	isMetal = YES;
+#endif
+	if ( fRendererStatusLabel )
+	{
+		[fRendererStatusLabel setStringValue:
+			isMetal ? @"MetalANGLE (Metal)" : @"OpenGL (Legacy)"];
+	}
+	if ( fRendererToggleButton )
+	{
+		[fRendererToggleButton setTitle:
+			isMetal ? @"Switch to OpenGL" : @"Switch to MetalANGLE"];
+	}
+
 	[fPreferencesWindow center];
 	[fPreferencesWindow makeKeyAndOrderFront:self];
 }
@@ -3626,6 +3643,37 @@ RunLoopObserverCallback( CFRunLoopObserverRef observer, CFRunLoopActivity activi
 	}
 	
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(IBAction)switchRenderer:(id)sender
+{
+	BOOL currentlyMetal = NO;
+#ifdef Rtt_MetalANGLE
+	currentlyMetal = YES;
+#endif
+	BOOL newValue = !currentlyMetal;
+	NSString *newRendererName = newValue ? @"MetalANGLE (Metal)" : @"OpenGL (Legacy)";
+
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert setMessageText:@"Switch Renderer"];
+	[alert setInformativeText:[NSString stringWithFormat:
+		@"Switch to %@?\n\nThe simulator will restart to apply the change.", newRendererName]];
+	[alert addButtonWithTitle:@"Switch & Restart"];
+	[alert addButtonWithTitle:@"Cancel"];
+
+	if ([alert runModal] == NSAlertFirstButtonReturn)
+	{
+		[[NSUserDefaults standardUserDefaults] setBool:newValue forKey:kUseMetalANGLE];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+
+		// Relaunch the app — main.m will execv() the correct binary based on the preference
+		NSString *appPath = [[NSBundle mainBundle] bundlePath];
+		NSTask *task = [[NSTask alloc] init];
+		[task setLaunchPath:@"/usr/bin/open"];
+		[task setArguments:@[@"-a", appPath]];
+		[task launch];
+		[NSApp terminate:nil];
+	}
 }
 
 - (NSComparisonResult) compareOSVersion:(NSString *) version with:(NSString *) otherVersion
