@@ -516,14 +516,10 @@ NSOpenGLPixelFormatAttribute attributes1 [] = {
 #else
     if ([self inLiveResize] || self.inFullScreenTransition)
     {
-        // This fixes nasty OpenGL painting artifacts when live resizing
 		[self invalidate];
     }
 	else if (shouldInvalidate)
 	{
-		// This turns out to be lightweight b/c setNeedsDisplay is called by the timer *only*
-		// when the Scene has already been invalidated. We invalidate here b/c drawRect
-		// can also be called by the OS in situations like dragging between multiple monitors.
 		[self invalidate];
 	}
 

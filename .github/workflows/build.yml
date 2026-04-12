@@ -446,6 +446,110 @@ jobs:
           echo "Notarization failed"
           exit 1
 
+  macOS-Simulator-Metal:
+    needs:
+      - source-code
+      - collect-ios-templates
+      - native
+      - webtemplate
+      # - linux
+    if: (! failure() && ! cancelled())
+    runs-on: macos-26
+    steps:
+      - run: CDR="$(basename "$(pwd)")" ; cd .. ; rm -rf "$CDR" ; mkdir -p "$CDR" ; cd "$CDR"
+      - name: Get processed code
+        uses: actions/download-artifact@v4
+        with:
+          name: SourceCode
+          path: SourceCode
+      - name: Unpack source code
+        run: tar -xzf SourceCode/corona.tgz
+      - run: ./tools/GHAction/daily_env.sh
+      - name: Check for macOS min supported version
+        run: exit $( echo  $(cat platform/mac/AppDelegate.mm |  perl -ne 'print for /kosVersionCurrent = @"([0-9.]+)"/') ' < '  $(/usr/bin/xcrun --sdk macosx --show-sdk-version)  | bc )
+      - name: Get collected templates
+        uses: actions/download-artifact@v4
+        with:
+          name: Collected-ios-templates
+          path: Collected-ios-templates
+      - name: Put collected iOS templates in place
+        run: cp -Rv Collected-ios-templates/* platform/resources/
+      - name: Get Webtemplate
+        uses: actions/download-artifact@v4
+        with:
+          name: Webtemplate
+          path: Webtemplate
+      - name: Put webtemplate in place
+        run: cp -v Webtemplate/webtemplate.zip platform/resources/
+      - name: Get Linux template
+        if: false
+        uses: actions/download-artifact@v4
+        with:
+          name: Linux-Template
+          path: Linux-Template
+      - name: Put linux in place
+        if: false
+        run: |
+          cp -v Linux-Template/linuxtemplate_x64.tgz platform/resources/
+      - run: mkdir docs
+      - name: Get Sample Code
+        uses: actions/checkout@v4
+        with:
+          repository: coronalabs/samples-coronasdk
+          path: docs/SampleCode
+      - name: Clean-up docs
+        run: rm -rf docs/SampleCode/.git docs/SampleCode/.gitignore
+      - name: Get Native
+        uses: actions/download-artifact@v4
+        with:
+          name: Native
+          path: Native
+      - name: Put JRE in place
+        shell: bash
+        run: |
+          curl -sL https://github.com/coronalabs/binary-data/releases/download/1.0/jre.macos.tgz -o jre.macos.tgz
+      - name: required for appdmg
+        run: brew install python-setuptools
+      - name: install appdmg
+        run: npm install -g appdmg
+      - name: install imagemagick
+        run: brew install imagemagick gs || true
+      - name: freshen icu4c for node
+        run: brew upgrade icu4c || brew install icu4c
+      - name: Build Metal DMG
+        run: ./tools/GHAction/build_dmg_metal.sh
+        env:
+          CERT_PASSWORD: ${{ secrets.CertPassword }}
+      - name: Notarize
+        id: notarize
+        run: |
+          [ -n "$APPLE_ISSUER" ] || exit 0
+          if ! (
+            set -ex
+            APPLE_KEY_FILE="$(mktemp)"
+            echo "$APPLE_KEY" > "$APPLE_KEY_FILE"
+            xcrun notarytool submit --key "$APPLE_KEY_FILE" --issuer "$APPLE_ISSUER" --key-id "$APPLE_KEY_ID" --wait ./output/*.dmg
+            xcrun stapler staple ./output/*.dmg
+          )
+          then
+            echo "NOTARIZATION_FAILED=true" >> "$GITHUB_OUTPUT"
+          fi
+        shell: bash
+        env:
+          APPLE_KEY: ${{ secrets.AppleKey }}
+          APPLE_KEY_ID: ${{ secrets.AppleKeyId }}
+          APPLE_ISSUER: ${{ secrets.AppleIssuer }}
+      - name: Upload macOS Metal build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Simulator-macOS-Metal
+          path: ./output
+      - name: Check if notarization failed
+        if: ${{ steps.notarize.outputs.NOTARIZATION_FAILED == 'true' }}
+        run: |
+          echo "Notarization failed"
+          exit 1
+
   check-notarization:
     runs-on: macos-26
     steps:
@@ -671,6 +775,7 @@ jobs:
     needs:
       - Windows-Simulator
       - macOS-Simulator
+      - macOS-Simulator-Metal
       # - linux
       - CoronaCards-Android
       - CoronaCards-iOS
@@ -683,6 +788,10 @@ jobs:
         with:
           name: Simulator-macOS
           path: Simulator-macOS
+      - uses: actions/download-artifact@v4
+        with:
+          name: Simulator-macOS-Metal
+          path: Simulator-macOS-Metal
       - uses: actions/download-artifact@v4
         with:
           name: Simulator-Windows
@@ -717,6 +826,7 @@ jobs:
           set -x
           mkdir artifacts
           mv Simulator-macOS/Corona-${{ env.YEAR }}.${{ env.BUILD }}.dmg artifacts/Solar2D-macOS-${{ env.YEAR }}.${{ env.BUILD }}.dmg
+          mv Simulator-macOS-Metal/Corona-Metal-${{ env.YEAR }}.${{ env.BUILD }}.dmg artifacts/Solar2D-macOS-Metal-${{ env.YEAR }}.${{ env.BUILD }}.dmg
           mv Simulator-Windows/Corona-${{ env.BUILD }}.msi artifacts/Solar2D-Windows-${{ env.YEAR }}.${{ env.BUILD }}.msi
           mv CoronaCards-iOS/CoronaCards.framework.zip artifacts/CoronaCards-iOS-${{ env.YEAR }}.${{ env.BUILD }}.zip
           mv CoronaCards-iOS-angle/CoronaCards-angle.zip artifacts/CoronaCards-iOS-MetalANGLE-${{ env.YEAR }}.${{ env.BUILD }}.zip
@@ -776,6 +886,7 @@ jobs:
     needs:
       - Windows-Simulator
       - macOS-Simulator
+      - macOS-Simulator-Metal
       # - linux
       - CoronaCards-Android
       - CoronaCards-iOS

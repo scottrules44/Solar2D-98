@@ -76,7 +76,8 @@ $XCODEBUILD -project "$PROJECT" \
     -configuration "$CONFIG" \
     build \
     CLANG_ENABLE_EXPLICIT_MODULES=NO \
-    "GCC_PREPROCESSOR_DEFINITIONS=\$(inherited) Rtt_MetalANGLE" \
+    "GCC_PREPROCESSOR_DEFINITIONS=\$(inherited) Rtt_MetalANGLE GL_GLEXT_PROTOTYPES" \
+    "OTHER_LDFLAGS=\$(inherited) -lMetalANGLE_static_mac -langle_common_mac -langle_base_mac -langle_metal_backend_mac -langle_gl_backend_mac -langle_image_util_mac -langle_util_mac -lglslang_mac -lspirv-cross_mac -framework Metal -framework IOSurface" \
     "SYMROOT=$METAL_SYMROOT" \
     "OBJROOT=$METAL_OBJROOT"
 

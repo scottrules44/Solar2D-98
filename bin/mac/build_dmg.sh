@@ -89,7 +89,12 @@ mkdir -pv "$logfilepath"
 
 (
 cd "$PLATFORM_MAC"
-./build.sh  "$CUSTOM_ID" "$S3_BUCKET" | tee  "$logfilepath"/simulator.txt
+if [ "$CORONA_BUILD_METAL" = "1" ]
+then
+	./build_metal.sh  "$CUSTOM_ID" "$S3_BUCKET" | tee  "$logfilepath"/simulator.txt
+else
+	./build.sh  "$CUSTOM_ID" "$S3_BUCKET" | tee  "$logfilepath"/simulator.txt
+fi
 
 if [ "${PIPESTATUS[0]}" -ne 0 ] #exit if the build script failed. $? gives us the output from tee not build.sh
 then
@@ -221,6 +226,12 @@ then
     ditto -v -X "$DOCSRC"/Tools "$TMPPATH"/${PRODUCT_DIR}/Tools
 fi
 
+METAL_SUFFIX=""
+if [ "$CORONA_BUILD_METAL" = "1" ]
+then
+	METAL_SUFFIX="-Metal"
+fi
+
 RESULT_DIR="$DSTDIR/${PRODUCT_DIR}"
 if [ "${BUILD_NUM}" != "" ] && [ "$DAILY_BUILD" == true ]
 then
@@ -228,11 +239,11 @@ then
 	mv "$TMPPATH"/${PRODUCT_DIR} "$TMPPATH/${PRODUCT_DIR}${BUILD_NUM}"
 	VOLUME_NAME=${PRODUCT_DIR}${BUILD_NUM}
 	ICON_NAME=${PRODUCT_DIR}${BUILD_NUM}
-	DMG_FILE=${PRODUCT_DIR}-${FULL_BUILD_NUM}.dmg
+	DMG_FILE=${PRODUCT_DIR}${METAL_SUFFIX}-${FULL_BUILD_NUM}.dmg
 else
 	VOLUME_NAME=${PRODUCT_DIR}
 	ICON_NAME=${PRODUCT_DIR}
-	DMG_FILE=${PRODUCT_DIR}-${FULL_BUILD_NUM}-release.dmg
+	DMG_FILE=${PRODUCT_DIR}${METAL_SUFFIX}-${FULL_BUILD_NUM}-release.dmg
 fi
 
 BACKGROUND_PATH=$SRCROOT/sdk/dmg/CoronaBackground.png

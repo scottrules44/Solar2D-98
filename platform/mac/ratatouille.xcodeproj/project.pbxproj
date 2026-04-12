@@ -216,7 +216,7 @@
 		00B7379C12B706FD0057F594 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7374E12B706E00057F594 /* IOKit.framework */; };
 		00B737A012B707040057F594 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7376412B706E00057F594 /* libsqlite3.dylib */; };
 		00B737A112B707060057F594 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375212B706E00057F594 /* OpenAL.framework */; };
-		/* 00B737A212B707080057F594  OpenGL.framework removed - conflicts with MetalANGLE GL symbols */
+		00B737A212B707080057F594 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375412B706E00057F594 /* OpenGL.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		00B737A412B7070D0057F594 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375812B706E00057F594 /* QuartzCore.framework */; };
 		00B737A512B7070F0057F594 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375A12B706E00057F594 /* Security.framework */; };
 		00B737A612B707110057F594 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375C12B706E00057F594 /* SystemConfiguration.framework */; };
@@ -1560,7 +1560,7 @@
 		C2E9930F1A6B1F9700E99F46 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7374C12B706E00057F594 /* AudioToolbox.framework */; };
 		C2E993101A6B201F00E99F46 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C287481C19F6EED0002D5B27 /* Cocoa.framework */; };
 		C2E993111A6B203500E99F46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375212B706E00057F594 /* OpenAL.framework */; };
-		/* C2E993121A6B203F00E99F46  OpenGL.framework removed - conflicts with MetalANGLE GL symbols */
+		C2E993121A6B203F00E99F46 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375412B706E00057F594 /* OpenGL.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C2E993131A6B20D900E99F46 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7376412B706E00057F594 /* libsqlite3.dylib */; };
 		C2E993141A6B211800E99F46 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375C12B706E00057F594 /* SystemConfiguration.framework */; };
 		C2E993161A6B217400E99F46 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B7375812B706E00057F594 /* QuartzCore.framework */; };
@@ -3949,10 +3949,7 @@
 				00B7379C12B706FD0057F594 /* IOKit.framework in Frameworks */,
 				00B737A012B707040057F594 /* libsqlite3.dylib in Frameworks */,
 				00B737A112B707060057F594 /* OpenAL.framework in Frameworks */,
-				/* OpenGL.framework removed - conflicts with MetalANGLE GL symbols */
-				F5AA000126030100000A0003 /* Metal.framework in Frameworks */,
-				F5AA000126030100000A0005 /* IOSurface.framework in Frameworks */,
-				F5AA100126030100000B0009 /* libMetalANGLE_static_mac.a in Frameworks */,
+				00B737A212B707080057F594 /* OpenGL.framework in Frameworks */,
 				00B737A412B7070D0057F594 /* QuartzCore.framework in Frameworks */,
 				00B737A512B7070F0057F594 /* Security.framework in Frameworks */,
 				00B737A612B707110057F594 /* SystemConfiguration.framework in Frameworks */,
@@ -4003,10 +4000,7 @@
 				C2A377811B34D50B00BB5B88 /* WebKit.framework in Frameworks */,
 				F57D17791BE2750800AABAC1 /* GameController.framework in Frameworks */,
 				C26E847F1A5DE1AE008950FB /* ALmixer.framework in Frameworks */,
-				/* OpenGL.framework removed - conflicts with MetalANGLE GL symbols */
-				F5AA000126030100000A0004 /* Metal.framework in Frameworks */,
-				F5AA000126030100000A0006 /* IOSurface.framework in Frameworks */,
-				F5AA100126030100000B000A /* libMetalANGLE_static_mac.a in Frameworks */,
+				C2E993121A6B203F00E99F46 /* OpenGL.framework in Frameworks */,
 				C2E993111A6B203500E99F46 /* OpenAL.framework in Frameworks */,
 				C2E993141A6B211800E99F46 /* SystemConfiguration.framework in Frameworks */,
 				C2E993161A6B217400E99F46 /* QuartzCore.framework in Frameworks */,
