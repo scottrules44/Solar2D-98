@@ -108,7 +108,19 @@ build_target() {
 	rm -vrf "$path/template-dSYM/$DST_ROOT/$VERSION/$CONFIGURATION/${PRODUCT_DST_REAL}.dSYM" 
 
 	echo "Running: xcodebuild -project '$path'/ratatouille.xcodeproj -target '$TARGET' -configuration Release -sdk '$SDK'" SYMROOT="$path/build"
-	xcodebuild -project "$path"/ratatouille.xcodeproj -target "$TARGET" -configuration Release -sdk "$SDK" SYMROOT="$path/build" 2>&1 | tee -a "$FULL_LOG_FILE" | egrep -v "$XCODE_LOG_FILTERS"
+	EXTRA_BUILD_SETTINGS=()
+	if [ -n "$TEMPLATE_TARGET_SUFFIX" ]
+	then
+		# For angle builds: supply compat shim headers (OpenGLES/ES2/gl.h etc.) needed
+		# by macCatalyst sub-targets, MetalANGLE public headers, and glslang headers
+		# needed by angle_base sub-project targets. Absolute paths avoid $(SRCROOT)
+		# resolution issues in sub-project (DependantBuilds) context on Xcode 26+.
+		EXTRA_BUILD_SETTINGS=(
+			"HEADER_SEARCH_PATHS=$OPENGL_COMPAT $METALANGLE_INCLUDE $GLSLANG_DIR \$(inherited)"
+			"GCC_PREPROCESSOR_DEFINITIONS=\$(inherited) Rtt_EGL"
+		)
+	fi
+	xcodebuild -project "$path"/ratatouille.xcodeproj -target "$TARGET" -configuration Release -sdk "$SDK" SYMROOT="$path/build" "${EXTRA_BUILD_SETTINGS[@]}" 2>&1 | tee -a "$FULL_LOG_FILE" | egrep -v "$XCODE_LOG_FILTERS"
     checkError
 
 	SUFFIX=$SDK_BASE
@@ -153,6 +165,9 @@ build_target() {
 if [ -n "$TEMPLATE_TARGET_SUFFIX" ]
 then
     METALANGLE_PROJECT="$path/../../external/MetalANGLE/ios/xcode/OpenGLES.xcodeproj"
+    METALANGLE_INCLUDE="$path/../../external/MetalANGLE/include"
+    GLSLANG_DIR="$path/../../external/MetalANGLE/third_party/glslang/src"
+
     echo "Pre-building MetalANGLE.framework for iphoneos (angle build)"
     xcodebuild build \
         -project "$METALANGLE_PROJECT" \
@@ -176,6 +191,26 @@ then
         DEPLOYMENT_POSTPROCESSING=NO \
         2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:)" || true
     checkError
+
+    # Create OpenGLES compatibility shim headers so that macCatalyst sub-targets
+    # (e.g. tachyon/CoronaCards built with SUPPORTS_MACCATALYST=YES) can resolve
+    # <OpenGLES/ES2/gl.h> via MetalANGLE's GLES2 headers.
+    OPENGL_COMPAT="$path/build/opengl-compat"
+    mkdir -p "$OPENGL_COMPAT/OpenGLES/ES2" \
+             "$OPENGL_COMPAT/OpenGLES/ES3" \
+             "$OPENGL_COMPAT/OpenGLES/ES1"
+    printf '#pragma once\n#include <GLES2/gl2.h>\n#ifndef GL_BGRA\n#define GL_BGRA GL_BGRA_EXT\n#endif\n' \
+        > "$OPENGL_COMPAT/OpenGLES/ES2/gl.h"
+    printf '#pragma once\n#include <GLES2/gl2ext.h>\n#ifndef GL_BGRA\n#define GL_BGRA GL_BGRA_EXT\n#endif\n' \
+        > "$OPENGL_COMPAT/OpenGLES/ES2/glext.h"
+    printf '#pragma once\n#include <GLES3/gl3.h>\n' \
+        > "$OPENGL_COMPAT/OpenGLES/ES3/gl.h"
+    printf '#pragma once\n#include <GLES3/gl3.h>\n' \
+        > "$OPENGL_COMPAT/OpenGLES/ES3/gl2.h"
+    printf '/* ES1 not supported by MetalANGLE */\n' \
+        > "$OPENGL_COMPAT/OpenGLES/ES1/gl.h"
+    printf '/* ES1 glext not supported by MetalANGLE */\n' \
+        > "$OPENGL_COMPAT/OpenGLES/ES1/glext.h"
 fi
 
 # iPhone basic (i.e. for subscribers)
