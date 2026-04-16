@@ -82,6 +82,9 @@ if [[ "$SF_SDK_PLATFORM" != "macosx" ]]; then
 
     # Compile for Mac Catalyst.  SF_MASTER_SCRIPT_RUNNING prevents build_framework.sh
     # from running again inside this xcodebuild invocation.
+    # Non-fatal: on macOS 26+ SDK the OpenGLES headers are gone, so non-angle targets
+    # cannot build for maccatalyst. Capture the exit code and skip the Catalyst slice
+    # rather than failing the whole build.
     xcodebuild -project "${PROJECT_FILE_PATH}" \
                -target "${TARGET_NAME}" \
                -configuration "${CONFIGURATION}" \
@@ -94,19 +97,22 @@ if [[ "$SF_SDK_PLATFORM" != "macosx" ]]; then
                OBJROOT="${OBJROOT}/DependantBuilds" \
                BUILD_ROOT="${BUILD_ROOT}" \
                SYMROOT="${SYMROOT}" \
-               "$ACTION"
+               "$ACTION" || { echo "Warning: Mac Catalyst build failed — skipping Catalyst slice"; SF_CATALYST_WRAPPER=""; }
 
     # The Catalyst build may not have created the .framework wrapper (because
-    # build_framework.sh exited early due to SF_MASTER_SCRIPT_RUNNING).
+    # build_framework.sh exited early due to SF_MASTER_SCRIPT_RUNNING, or because
+    # the build was skipped due to failure above).
     # Seed the wrapper from the iOS device slice and replace the binary.
-    CATALYST_LIB="${SF_CATALYST_BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}"
-    if [[ -f "${CATALYST_LIB}" ]]; then
-        cp -a "${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}" "${SF_CATALYST_WRAPPER}"
-        cp -f "${CATALYST_LIB}" \
-              "${SF_CATALYST_WRAPPER}/Versions/A/${SF_TARGET_NAME}"
-    else
-        echo "Warning: Catalyst lib not found at ${CATALYST_LIB} — skipping Catalyst slice"
-        SF_CATALYST_WRAPPER=""
+    if [[ -n "${SF_CATALYST_WRAPPER}" ]]; then
+        CATALYST_LIB="${SF_CATALYST_BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}"
+        if [[ -f "${CATALYST_LIB}" ]]; then
+            cp -a "${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}" "${SF_CATALYST_WRAPPER}"
+            cp -f "${CATALYST_LIB}" \
+                  "${SF_CATALYST_WRAPPER}/Versions/A/${SF_TARGET_NAME}"
+        else
+            echo "Warning: Catalyst lib not found at ${CATALYST_LIB} — skipping Catalyst slice"
+            SF_CATALYST_WRAPPER=""
+        fi
     fi
 fi
 # ── end Mac Catalyst ─────────────────────────────────────────────────────────
