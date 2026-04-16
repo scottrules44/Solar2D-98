@@ -326,6 +326,28 @@ jobs:
       - name: Unpack source code
         run: tar -xzf SourceCode/corona.tgz
       - run: ./tools/GHAction/daily_env.sh
+      - name: Pre-build MetalANGLE for CoronaCards-angle
+        working-directory: ./external/MetalANGLE/ios/xcode
+        run: |
+          SYMROOT="$(pwd)/../../build/MetalANGLE"
+          xcodebuild build \
+            -project OpenGLES.xcodeproj \
+            -target MetalANGLE \
+            -configuration Release \
+            -sdk iphoneos \
+            SYMROOT="$SYMROOT" \
+            SKIP_INSTALL=YES \
+            DEPLOYMENT_POSTPROCESSING=NO \
+            "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)"
+          xcodebuild build \
+            -project OpenGLES.xcodeproj \
+            -target MetalANGLE \
+            -configuration Release \
+            -sdk iphonesimulator \
+            SYMROOT="$SYMROOT" \
+            SKIP_INSTALL=YES \
+            DEPLOYMENT_POSTPROCESSING=NO \
+            "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)"
       - name: Corona Cards framework for iOS
         working-directory: ./platform/iphone
         run: |
