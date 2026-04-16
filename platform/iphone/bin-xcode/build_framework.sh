@@ -55,7 +55,10 @@ else
 fi
 
 # Build the other platform.
-xcodebuild -project "${PROJECT_FILE_PATH}" -target "${TARGET_NAME}" -configuration "${CONFIGURATION}" -sdk "${SF_OTHER_PLATFORM}${SF_SDK_VERSION}" BUILD_DIR="${BUILD_DIR}" OBJROOT="${OBJROOT}/DependantBuilds" BUILD_ROOT="${BUILD_ROOT}" SYMROOT="${SYMROOT}" "$ACTION"
+# Pass ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES so that angle builds importing
+# MetalANGLE (whose MGLContext.h includes non-modular EGL/egl.h) don't fail here —
+# command-line settings from the outer xcodebuild are not inherited by sub-builds.
+xcodebuild -project "${PROJECT_FILE_PATH}" -target "${TARGET_NAME}" -configuration "${CONFIGURATION}" -sdk "${SF_OTHER_PLATFORM}${SF_SDK_VERSION}" BUILD_DIR="${BUILD_DIR}" OBJROOT="${OBJROOT}/DependantBuilds" BUILD_ROOT="${BUILD_ROOT}" SYMROOT="${SYMROOT}" ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES=YES "$ACTION"
 
 # Copy the static library into each platform's framework bundle
 cp -a "${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}" "${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}"
