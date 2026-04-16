@@ -97,8 +97,12 @@ then
         SYMROOT="$path/build" \
         SKIP_INSTALL=YES \
         DEPLOYMENT_POSTPROCESSING=NO \
-        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:)" || true
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then echo "Exiting due to errors (above)"; exit 1; fi
+        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:|warning: no rule|cannot be found|Undefined symbol|ld:)" || true
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+        echo "=== MetalANGLE ${SDK_DEVICE} build failed — last 150 lines of log ==="
+        tail -150 "$FULL_LOG_FILE"
+        echo "Exiting due to errors (above)"; exit 1
+    fi
 
     echo "Pre-building MetalANGLE.framework for ${SDK_SIMULATOR} (angle build)"
     xcodebuild build \
@@ -109,8 +113,12 @@ then
         SYMROOT="$path/build" \
         SKIP_INSTALL=YES \
         DEPLOYMENT_POSTPROCESSING=NO \
-        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:)" || true
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then echo "Exiting due to errors (above)"; exit 1; fi
+        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:|warning: no rule|cannot be found|Undefined symbol|ld:)" || true
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+        echo "=== MetalANGLE ${SDK_SIMULATOR} build failed — last 150 lines of log ==="
+        tail -150 "$FULL_LOG_FILE"
+        echo "Exiting due to errors (above)"; exit 1
+    fi
 
     ANGLE_SETTINGS=(
         "HEADER_SEARCH_PATHS=$GLSLANG_DIR \$(inherited)"
