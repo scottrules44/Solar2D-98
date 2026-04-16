@@ -15,8 +15,16 @@
 
 #if defined( Rtt_OPENGLES )
 	#if defined( Rtt_IPHONE_ENV ) || defined( Rtt_TVOS_ENV )
-		#include <OpenGLES/ES2/gl.h>
-		#include <OpenGLES/ES2/glext.h>
+		#if defined( Rtt_EGL )
+			// MetalANGLE (angle) build: use GLES2 headers from MetalANGLE directly.
+			// System OpenGLES/ES2 headers are deprecated/removed on iOS/tvOS 26+;
+			// MetalANGLE's GLES2 headers are the canonical source for this path.
+			#include <GLES2/gl2.h>
+			#include <GLES2/gl2ext.h>
+		#else
+			#include <OpenGLES/ES2/gl.h>
+			#include <OpenGLES/ES2/glext.h>
+		#endif
 	#elif defined( Rtt_SYMBIAN_ENV )
 		#include <gles/gl.h>
 	#elif defined( Rtt_ANDROID_ENV ) || defined( Rtt_WEBOS_ENV ) || defined( Rtt_WIN_PHONE_ENV ) || defined( Rtt_EMSCRIPTEN_ENV )
