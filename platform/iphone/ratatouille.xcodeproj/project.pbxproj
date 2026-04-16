@@ -2989,6 +2989,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F576ADB82A99CD8F00B85312 /* PBXTargetDependency */,
 				F576AD7C2A99C5BF00B85312 /* PBXTargetDependency */,
 				F576ACE82A99C5A000B85312 /* PBXTargetDependency */,
 				F576ACEA2A99C5A000B85312 /* PBXTargetDependency */,
