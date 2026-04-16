@@ -118,6 +118,7 @@ build_target() {
 		EXTRA_BUILD_SETTINGS=(
 			"HEADER_SEARCH_PATHS=$OPENGL_COMPAT $METALANGLE_INCLUDE $GLSLANG_DIR \$(inherited)"
 			"GCC_PREPROCESSOR_DEFINITIONS=\$(inherited) Rtt_EGL"
+			"ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES=YES"
 		)
 	fi
 	xcodebuild -project "$path"/ratatouille.xcodeproj -target "$TARGET" -configuration Release -sdk "$SDK" SYMROOT="$path/build" "${EXTRA_BUILD_SETTINGS[@]}" 2>&1 | tee -a "$FULL_LOG_FILE" | egrep -v "$XCODE_LOG_FILTERS"
@@ -177,8 +178,13 @@ then
         SYMROOT="$path/build" \
         SKIP_INSTALL=YES \
         DEPLOYMENT_POSTPROCESSING=NO \
-        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:)" || true
-    checkError
+        "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)" \
+        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:|Undefined symbol|ld:)" || true
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+        echo "=== MetalANGLE iphoneos build failed — last 150 lines of log ==="
+        tail -150 "$FULL_LOG_FILE"
+        echo "Exiting due to errors (above)"; exit 1
+    fi
 
     echo "Pre-building MetalANGLE.framework for iphonesimulator (angle build)"
     xcodebuild build \
@@ -189,8 +195,13 @@ then
         SYMROOT="$path/build" \
         SKIP_INSTALL=YES \
         DEPLOYMENT_POSTPROCESSING=NO \
-        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:)" || true
-    checkError
+        "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)" \
+        2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:|Undefined symbol|ld:)" || true
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+        echo "=== MetalANGLE iphonesimulator build failed — last 150 lines of log ==="
+        tail -150 "$FULL_LOG_FILE"
+        echo "Exiting due to errors (above)"; exit 1
+    fi
 
     # Create OpenGLES compatibility shim headers so that macCatalyst sub-targets
     # (e.g. tachyon/CoronaCards built with SUPPORTS_MACCATALYST=YES) can resolve
