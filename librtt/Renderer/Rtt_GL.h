@@ -21,6 +21,13 @@
 			// MetalANGLE's GLES2 headers are the canonical source for this path.
 			#include <GLES2/gl2.h>
 			#include <GLES2/gl2ext.h>
+			// MetalANGLE's gl2ext.h defines GL_BGRA_EXT but not GL_BGRA.
+			// Apple's OpenGLES/ES2/glext.h defines both; add the alias so
+			// existing code using GL_BGRA (e.g. Rtt_IPhoneGLVideoTexture.mm)
+			// still compiles against MetalANGLE headers.
+			#ifndef GL_BGRA
+				#define GL_BGRA GL_BGRA_EXT
+			#endif
 		#else
 			#include <OpenGLES/ES2/gl.h>
 			#include <OpenGLES/ES2/glext.h>
