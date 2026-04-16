@@ -329,7 +329,18 @@ jobs:
       - name: Corona Cards framework for iOS
         working-directory: ./platform/iphone
         run: |
-          xcodebuild -scheme CoronaCards-angle.framework -project ratatouille.xcodeproj -configuration Release -sdk iphoneos build -derivedDataPath "$(pwd)/build"
+          METALANGLE_INCLUDE="$(pwd)/../../external/MetalANGLE/include"
+          GLSLANG_DIR="$(pwd)/../../external/MetalANGLE/third_party/glslang/src"
+          xcodebuild -scheme CoronaCards-angle.framework \
+            -project ratatouille.xcodeproj \
+            -configuration Release \
+            -sdk iphoneos \
+            build \
+            -derivedDataPath "$(pwd)/build" \
+            "HEADER_SEARCH_PATHS=$METALANGLE_INCLUDE $GLSLANG_DIR \$(inherited)" \
+            "GCC_PREPROCESSOR_DEFINITIONS=\$(inherited) Rtt_EGL" \
+            "ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES=YES" \
+            "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)"
           cd build/Build/Products/Release-iphoneos
           rm -rf CoronaCards.framework
           cp -R CoronaCards-angle.framework/CoronaCards-angle CoronaCards-angle.framework/CoronaCards
