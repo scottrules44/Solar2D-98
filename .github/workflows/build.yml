@@ -329,14 +329,43 @@ jobs:
       - name: Corona Cards framework for iOS
         working-directory: ./platform/iphone
         run: |
+          METALANGLE_PROJECT="$(pwd)/../../external/MetalANGLE/ios/xcode/OpenGLES.xcodeproj"
           METALANGLE_INCLUDE="$(pwd)/../../external/MetalANGLE/include"
           GLSLANG_DIR="$(pwd)/../../external/MetalANGLE/third_party/glslang/src"
+          DERIVED_DATA="$(pwd)/build"
+          SYMROOT="$DERIVED_DATA/Build/Products"
+          # Pre-build MetalANGLE.framework for iphoneos and iphonesimulator so
+          # that @import MetalANGLE in AutoLinkModules.m resolves during
+          # ScanDependencies before CoronaCards-angle compilation starts.
+          # CoronaCards-angle has no MetalANGLE target dependency (removed to
+          # fix macCatalyst propagation), so the framework must exist in
+          # BUILT_PRODUCTS_DIR before the scheme build begins.
+          xcodebuild build \
+            -project "$METALANGLE_PROJECT" \
+            -target MetalANGLE \
+            -configuration Release \
+            -sdk iphoneos \
+            SYMROOT="$SYMROOT" \
+            SKIP_INSTALL=YES \
+            DEPLOYMENT_POSTPROCESSING=NO \
+            "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)" \
+            "ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES=YES"
+          xcodebuild build \
+            -project "$METALANGLE_PROJECT" \
+            -target MetalANGLE \
+            -configuration Release \
+            -sdk iphonesimulator \
+            SYMROOT="$SYMROOT" \
+            SKIP_INSTALL=YES \
+            DEPLOYMENT_POSTPROCESSING=NO \
+            "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)" \
+            "ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES=YES"
           xcodebuild -scheme CoronaCards-angle.framework \
             -project ratatouille.xcodeproj \
             -configuration Release \
             -sdk iphoneos \
             build \
-            -derivedDataPath "$(pwd)/build" \
+            -derivedDataPath "$DERIVED_DATA" \
             "HEADER_SEARCH_PATHS=$METALANGLE_INCLUDE $GLSLANG_DIR \$(inherited)" \
             "GCC_PREPROCESSOR_DEFINITIONS=\$(inherited) Rtt_EGL" \
             "ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES=YES" \
