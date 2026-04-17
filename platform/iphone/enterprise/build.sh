@@ -177,7 +177,11 @@ if [ ${PIPESTATUS[0]} -ne 0 ]; then
     echo "Exiting due to errors (above)"; exit 1
 fi
 
-# Mac Catalyst MetalANGLE (non-fatal: OpenGLES may be absent from macOS 26 SDK)
+# Mac Catalyst MetalANGLE (non-fatal: OpenGLES absent from macOS 26 SDK)
+# Do NOT pass -weak_framework OpenGLES here: macOS 26 SDK has no OpenGLES.framework
+# at all, so the linker cannot resolve even a weak reference to it.
+# MetalANGLE IS the OpenGLES implementation (Metal-backed), so it doesn't need
+# to link against the system OpenGLES on Mac Catalyst.
 echo "Pre-building MetalANGLE.framework for Mac Catalyst (non-fatal)"
 xcodebuild build \
     -project "$METALANGLE_PROJECT" \
@@ -190,7 +194,7 @@ xcodebuild build \
     SYMROOT="$SYMROOT" \
     SKIP_INSTALL=YES \
     DEPLOYMENT_POSTPROCESSING=NO \
-    "OTHER_LDFLAGS=-weak_framework OpenGLES \$(inherited)" \
+    OTHER_LDFLAGS="\$(inherited)" \
     2>&1 | tee -a "$FULL_LOG_FILE" | grep -E "(BUILD SUCCEEDED|BUILD FAILED|error:|Undefined symbol|ld:)" || \
     echo "Warning: MetalANGLE Mac Catalyst build failed — skipping Catalyst slice"
 
